@@ -35,18 +35,19 @@ PHP-Library to work with Boomstarter Gifts API.
 (подарок)
 
     class Gift
-        pledged
+        uuid
         product_id
-        location
-        owner
+        name
+        pledged
+        pledged_cents
+        comments
+        delivery_state
         payout_id
+        order_id
+        owner
+        location
         state
         zipcode
-        comments
-        uuid
-        name
-        pledged_cents
-        delivery_state
         region
         district
         city
@@ -55,7 +56,6 @@ PHP-Library to work with Boomstarter Gifts API.
         building
         construction
         apartment
-        order_id
         
         function order($order_id);
         function schedule($delivery_date);
