@@ -491,7 +491,7 @@ class API
      * Возвращает список подарков без фильтра по доставке,
      * все с сортировкой по дате завешения сбора средств.
      *
-     * @param $status string Gift::STATUS_ALL|Gift::STATUS_PENDING|Gift::STATUS_SHIPPING|Gift::STATUS_DELIVERED статус
+     * @param $status string NULL|'pending'|'shipping'|'delivered' статус
      * @return array(Gift)  Возвращает массив подарков
      */
     private function getGifts($status=NULL)
@@ -522,17 +522,17 @@ class API
 
     public function getGiftsPending()
     {
-        return $this->getGifts(Gift::STATUS_PENDING);
+        return $this->getGifts('pending');
     }
 
     public function getGiftsShipping()
     {
-        return $this->getGifts(Gift::STATUS_SHIPPING);
+        return $this->getGifts('shipping');
     }
 
     public function getGiftsDelivered()
     {
-        return $this->getGifts(Gift::STATUS_DELIVERED);
+        return $this->getGifts('delivered');
     }
 
     public function useCurl()
@@ -565,12 +565,6 @@ class API
 
 class Gift
 {
-    // Статусы подарков
-    const STATUS_ALL = NULL;
-    const STATUS_PENDING = 'pending';
-    const STATUS_SHIPPING = 'shipping';
-    const STATUS_DELIVERED = 'delivered';
-
     /* @var int */
     public $pledged = NULL;    // 690.0
     /* @var string */
