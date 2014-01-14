@@ -487,7 +487,9 @@ class API
 
     function __construct($shop_uuid, $shop_token)
     {
-        $this->setupTransport($shop_uuid, $shop_token);
+        $this->transport = new Transport();
+        $this->transport->setShopUUID($shop_uuid);
+        $this->transport->setShopToken($shop_token);
     }
 
     /**
@@ -547,14 +549,6 @@ class API
     public function useStream()
     {
         $this->transport->useStream();
-        return $this;
-    }
-
-    private function setupTransport($shop_uuid, $shop_token)
-    {
-        $this->transport = new Transport();
-        $this->transport->setShopUUID($shop_uuid);
-        $this->transport->setShopToken($shop_token);
         return $this;
     }
 
