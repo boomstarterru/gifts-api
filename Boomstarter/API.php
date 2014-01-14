@@ -670,3 +670,11 @@ class Gift
         return $this;
     }
 }
+
+// TODO что с Gift::location
+// TODO что с Gift::owner
+// TODO что с Gift::location:country
+// TODO что с Gift::location:city
+// TODO тесты драйверов
+// TODO тесты транспорта
+// TODO тесты mock CurlRequest, StreamRequest
