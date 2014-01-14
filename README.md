@@ -3,8 +3,6 @@ gifts-api
 
 PHP-Library to work with Boomstarter Gifts API.
 
-![scheme](https://raw2.github.com/boomstarterru/gifts-api/master/doc/scheme.jpg)
-
 
 Пример использования:
 
@@ -22,3 +20,6 @@ PHP-Library to work with Boomstarter Gifts API.
     foreach($gifts as $gift) {
         echo "product_id: {$gift->product_id} - name: {$gift->name}\n";
     }
+
+![scheme](https://raw2.github.com/boomstarterru/gifts-api/master/doc/scheme.jpg)
+
