@@ -427,9 +427,12 @@ class GiftFactory
 {
     public static function getGift($transport, $properties)
     {
-        $gift = new Gift();
-        $gift->setProperties($properties);
-        $gift->setTransport($transport);
+        $gift = new Gift($transport);
+        
+        foreach($properties as $name=>$value) {
+            $gift->$name = $value;
+        }
+        
         return $gift;
     }
 }
@@ -611,6 +614,11 @@ class Gift
     /* @var Transport */
     private $transport = NULL;
 
+    function __construct($transport)
+    {
+        $this->transport = $transport;
+    }
+
     public function order($order_id)
     {
         $url = "/api/v1.1/partners/gifts/{$this->uuid}/order";
@@ -648,20 +656,6 @@ class Gift
         $result = $this->transport->put($url, $data);
 
         return $result;
-    }
-
-    public function setTransport($transport)
-    {
-        $this->transport = $transport;
-        return $this;
-    }
-
-    public function setProperties($properties)
-    {
-        foreach($properties as $name=>$value) {
-            $this->$name = $value;
-        }
-        return $this;
     }
 }
 
