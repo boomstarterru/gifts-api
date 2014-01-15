@@ -9,6 +9,10 @@ require_once __DIR__ . '/../Boomstarter/API.php';
 
 class TransportTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @param $expected
+     * @return Boomstarter\Transport
+     */
     private function getMockedTransport($expected)
     {
         // override RESTDriverCurl::get() ::post() ::put() ::delete()
