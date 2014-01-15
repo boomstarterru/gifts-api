@@ -709,4 +709,8 @@ class Gift
 // TODO что с Gift::owner
 // TODO что с Gift::location:country
 // TODO что с Gift::location:city
-// TODO как отдавать _metadata.total_count
+// TODO как отдавать _metadata.total_count ---> через ArrayIterator::getTotalCount()
+// TODO что возвращает Gift::order()
+// TODO что возвращает Gift::schedule()
+// TODO что возвращает Gift::setState()
+// TODO server debug info для интеграционного теста
