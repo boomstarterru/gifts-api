@@ -645,6 +645,11 @@ class Gift
 
     public function order($order_id)
     {
+        // validate
+        if (!$order_id) {
+            throw new Exception("Unsupported order_id value: '{$order_id}'. Expected integer.");
+        }
+
         $url = "/gifts/{$this->uuid}/order";
 
         $data = array(
@@ -656,12 +661,20 @@ class Gift
         return $result;
     }
 
+    /**
+     * @param $delivery_date string|\DateTime В любом формате поддерживаемом DateTime()
+     * @return mixed
+     */
     public function schedule($delivery_date)
     {
+        // validate
+        $datetime = $delivery_date instanceof \DateTime ? $delivery_date : new \DateTime($delivery_date);
+
         $url = "/gifts/{$this->uuid}/schedule";
 
         $data = array(
-            "delivery_date" => $delivery_date
+            //  ISO 8601
+            "delivery_date" => $datetime->format(\DateTime::ISO8601)
         );
 
         $result = $this->transport->post($url, $data);
@@ -669,8 +682,17 @@ class Gift
         return $result;
     }
 
+    /**
+     * @param $delivery_state 'delivery'
+     * @return mixed
+     */
     public function setState($delivery_state)
     {
+        // validate
+        if ($delivery_state != 'delivery') {
+            throw new Exception("Unsupported delivery state: '{$delivery_state}'");
+        }
+
         $url = "/gifts/{$this->uuid}/delivery_state";
 
         $data = array(
