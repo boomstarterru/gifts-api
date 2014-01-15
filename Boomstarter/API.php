@@ -1,9 +1,11 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: vital
- * Date: 14.01.14
- * Time: 20:41
+ * Библиотека для работы с подарками Boomstarter
+ * Boomstarter Gifts API
+ *
+ * @docs https://boomstarter.ru/gifts/
+ * @api http://docs.boomstarter.apiary.io/
+ * @url https://github.com/boomstarterru/gifts-api
  */
 
 namespace Boomstarter;
@@ -35,6 +37,12 @@ interface IRESTDriver
 }
 
 
+/**
+ * Class CurlRequest
+ * Драйвер для HTTP-запросов
+ *
+ * @package Boomstarter
+ */
 class CurlRequest implements IHttpRequest
 {
     /* @var mixed */
@@ -74,6 +82,12 @@ class CurlRequest implements IHttpRequest
 }
 
 
+/**
+ * Class CurlRequest
+ * Драйвер для HTTP-запросов
+ *
+ * @package Boomstarter
+ */
 class StreamRequest implements IHttpRequest
 {
     /* @var mixed */
@@ -316,8 +330,19 @@ class RESTDriverStream implements IRESTDriver
 }
 
 
+/**
+ * Class RESTDriverFactory
+ * Фабрика драйверов
+ *
+ * @package Boomstarter
+ */
 class RESTDriverFactory
 {
+    /**
+     * Автоматически выбирает подходящий драйвер
+     *
+     * @return RESTDriverCurl|RESTDriverStream
+     */
     public static function getAutomatic()
     {
         if (function_exists('curl_exec')) {
@@ -329,11 +354,17 @@ class RESTDriverFactory
         return $driver;
     }
 
+    /**
+     * @return RESTDriverCurl
+     */
     public static function getCurl()
     {
         return new RESTDriverCurl();
     }
 
+    /**
+     * @return RESTDriverStream
+     */
     public static function getStream()
     {
         return new RESTDriverStream();
@@ -341,6 +372,13 @@ class RESTDriverFactory
 }
 
 
+/**
+ * Class Transport
+ * Вызов REST методов
+ * @none Использует несколько драйверов
+ *
+ * @package Boomstarter
+ */
 class Transport
 {
     /* @var IRESTDriver */
@@ -357,24 +395,43 @@ class Transport
         $this->driver = RESTDriverFactory::getAutomatic();
     }
 
+    /**
+     * @param $shop_uuid string
+     * @return $this
+     */
     public function setShopUUID($shop_uuid)
     {
         $this->shop_uuid = $shop_uuid;
         return $this;
     }
 
+    /**
+     * @param $shop_token string
+     * @return $this
+     */
     public function setShopToken($shop_token)
     {
         $this->shop_token = $shop_token;
         return $this;
     }
 
+    /**
+     * @param $api_url string
+     * @return $this
+     */
     public function setApiUrl($api_url)
     {
         $this->api_url = $api_url;
         return $this;
     }
 
+    /**
+     * REST-метод GET
+     *
+     * @param $url string URL
+     * @param $data array параметры
+     * @return array
+     */
     public function get($url, $data)
     {
         $data["shop_uuid"] = $this->shop_uuid;
@@ -386,6 +443,13 @@ class Transport
         return $result;
     }
 
+    /**
+     * REST-метод POST
+     *
+     * @param $url string URL
+     * @param $data array параметры
+     * @return array
+     */
     public function post($url, $data)
     {
         $data["shop_uuid"] = $this->shop_uuid;
@@ -397,6 +461,13 @@ class Transport
         return $result;
     }
 
+    /**
+     * REST-метод PUT
+     *
+     * @param $url string URL
+     * @param $data array параметры
+     * @return array
+     */
     public function put($url, $data)
     {
         $data["shop_uuid"] = $this->shop_uuid;
@@ -408,6 +479,13 @@ class Transport
         return $result;
     }
 
+    /**
+     * REST-метод DELETE
+     *
+     * @param $url string URL
+     * @param $data array параметры
+     * @return array
+     */
     public function delete($url, $data)
     {
         $data["shop_uuid"] = $this->shop_uuid;
@@ -419,18 +497,32 @@ class Transport
         return $result;
     }
 
+    /**
+     * Использовать Curl драйвер
+     *
+     * @return $this
+     */
     public function useCurl()
     {
         $this->driver = RESTDriverFactory::getCurl();
         return $this;
     }
 
+    /**
+     * Использовать Stream драйвер
+     *
+     * @return $this
+     */
     public function useStream()
     {
         $this->driver = RESTDriverFactory::getStream();
         return $this;
     }
 
+    /**
+     * @reserved
+     * @return IRESTDriver|RESTDriverCurl|RESTDriverStream
+     */
     public function getDriver()
     {
         return $this->driver;
@@ -438,24 +530,55 @@ class Transport
 }
 
 
+/**
+ * Class GiftIterator
+ * Список подарков
+ *
+ * @package Boomstarter
+ */
 class GiftIterator extends \ArrayIterator
 {
+    /* @var int */
     private $total_count = 0;
 
+    /**
+     * @return int количество подарков всего на сеовере
+     */
     public function getTotalCount()
     {
         return $this->total_count;
     }
 
+    /**
+     * @param $total_count Количество подарков всего на сеовере.
+     * @none Используется при инициализации списка.
+     * @return $this
+     */
     public function setTotalCount($total_count)
     {
         $this->total_count = $total_count;
+        return $this;
     }
 }
 
 
+/**
+ * Class GiftFactory
+ * Фабрика подарков
+ *
+ * @package Boomstarter
+ */
 class GiftFactory
 {
+    /**
+     * Возвращает объект подарка.
+     * Устанавливает свойства $properties.
+     * Устанавливает транспорт $transport.
+     *
+     * @param $transport Transport Транспорт для вызова REST API
+     * @param $properties array Массив свойств. Ключ=>значение
+     * @return Gift
+     */
     public static function getGift($transport, $properties)
     {
         $gift = new Gift($transport);
@@ -511,6 +634,12 @@ class Owner
 }
 
 
+/**
+ * Class API
+ * API подарков
+ *
+ * @package Boomstarter
+ */
 class API
 {
     /* @var Transport */
@@ -524,13 +653,13 @@ class API
     }
 
     /**
-     * Возвращает список подарков без фильтра по доставке,
+     * Возвращает список подарков
      * все с сортировкой по дате завешения сбора средств.
      *
-     * @param $status NULL|'pending'|'shipping'|'delivered' статус
+     * @param $status NULL|'pending'|'shipping'|'delivered' Фильтр по статусу. NULL-все.
      * @param $limit int Количество. Сколько подарков вернуть за раз
      * @param $offset int Отступ. Сколько подарков пропустить с начала
-     * @return GiftIterator()  Возвращает массив подарков
+     * @return GiftIterator  Возвращает массив подарков
      */
     private function getGifts($status, $limit, $offset)
     {
@@ -566,32 +695,70 @@ class API
         return $result;
     }
 
+    /**
+     * Возвращает список подарков без фильтра по доставке. Т.е. все.
+     *
+     * @param int $limit int Количество. Сколько подарков вернуть за раз
+     * @param int $offset int Отступ. Сколько подарков пропустить с начала
+     * @return GiftIterator Возвращает массив подарков
+     */
     public function getGiftsAll($limit=100, $offset=0)
     {
         return $this->getGifts(NULL, $limit, $offset);
     }
 
+    /**
+     * Возвращает список подарков в ожидании доставки.
+     *
+     * @param int $limit int Количество. Сколько подарков вернуть за раз
+     * @param int $offset int Отступ. Сколько подарков пропустить с начала
+     * @return GiftIterator Возвращает массив подарков
+     */
     public function getGiftsPending($limit=100, $offset=0)
     {
         return $this->getGifts('pending', $limit, $offset);
     }
 
+    /**
+     * Возвращает список подарков со статусом "в доставке".
+     *
+     * @param int $limit int Количество. Сколько подарков вернуть за раз
+     * @param int $offset int Отступ. Сколько подарков пропустить с начала
+     * @return GiftIterator Возвращает массив подарков
+     */
     public function getGiftsShipping($limit=100, $offset=0)
     {
         return $this->getGifts('shipping', $limit, $offset);
     }
 
+    /**
+     * Возвращает список доставленных подарков.
+     *
+     * @param int $limit int Количество. Сколько подарков вернуть за раз
+     * @param int $offset int Отступ. Сколько подарков пропустить с начала
+     * @return GiftIterator Возвращает массив подарков
+     */
     public function getGiftsDelivered($limit=100, $offset=0)
     {
         return $this->getGifts('delivered', $limit, $offset);
     }
 
+    /**
+     * Переключиться на использование curl для HTTP-запросов.
+     *
+     * @return $this
+     */
     public function useCurl()
     {
         $this->getTransport()->useCurl();
         return $this;
     }
 
+    /**
+     * Переключиться на использование stream_get_contents() для HTTP-запросов.
+     *
+     * @return $this
+     */
     public function useStream()
     {
         $this->getTransport()->useStream();
@@ -599,6 +766,7 @@ class API
     }
 
     /**
+     * @reserved
      * @return Transport
      */
     public function getTransport()
@@ -607,7 +775,12 @@ class API
     }
 }
 
-
+/**
+ * Class Gift
+ * Подарок
+ *
+ * @package Boomstarter
+ */
 class Gift
 {
     /* @var int */
@@ -661,6 +834,13 @@ class Gift
         $this->transport = $transport;
     }
 
+    /**
+     * Подтверждение подарка с передачей ID-заказа магазина.
+     *
+     * @param $order_id string номер заказа
+     * @return mixed
+     * @throws Exception при некорректном $order_id
+     */
     public function order($order_id)
     {
         // validate
@@ -680,7 +860,9 @@ class Gift
     }
 
     /**
-     * @param $delivery_date string|\DateTime В любом формате поддерживаемом DateTime()
+     * Передача времени или даты доставки подарка.
+     *
+     * @param $delivery_date string|\DateTime Дата доставки. В любом формате поддерживаемом DateTime()
      * @return mixed
      */
     public function schedule($delivery_date)
@@ -701,8 +883,11 @@ class Gift
     }
 
     /**
-     * @param $delivery_state 'delivery'
+     * Завершение доставки, клиенту вручили подарок.
+     *
+     * @param $delivery_state 'delivery' Параметр состояния доставки. (delivery - подарок доставлен)
      * @return mixed
+     * @throws Exception при некорректном $delivery_state
      */
     public function setState($delivery_state)
     {

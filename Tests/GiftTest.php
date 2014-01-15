@@ -4,10 +4,6 @@
  * User: vital
  * Date: 09.12.13
  * Time: 18:20
- *
- * https://boomstarter.ru/gifts/
- * http://docs.boomstarter.apiary.io/
- * https://github.com/boomstarterru/gifts-api
  */
 require_once __DIR__ . '/../Boomstarter/API.php';
 
