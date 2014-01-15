@@ -59,7 +59,7 @@ PHP-Library to work with Boomstarter Gifts API.
         
         function order($order_id);
         function schedule($delivery_date);
-        function setState($delivery_state);
+        function setStateDelivery();
         
 ### Схема
 
