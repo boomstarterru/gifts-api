@@ -68,7 +68,7 @@ class APITest extends PHPUnit_Framework_TestCase
 
         $result = $api->getGiftsAll();
 
-        $this->assertTrue(is_array($result));
+        $this->assertInstanceOf('Boomstarter\GiftIterator', $result);
         $this->assertEquals(0, count($result));
     }
 
@@ -90,8 +90,9 @@ class APITest extends PHPUnit_Framework_TestCase
 
         $result = $api->getGiftsAll();
 
-        $this->assertTrue(is_array($result));
+        $this->assertInstanceOf('Boomstarter\GiftIterator', $result);
         $this->assertEquals(1, count($result));
+        $this->assertEquals($expected['_metadata']['total_count'], $result->getTotalCount());
         $this->assertInstanceOf('Boomstarter\Gift', $result[0]);
     }
 
@@ -113,7 +114,7 @@ class APITest extends PHPUnit_Framework_TestCase
 
         $result = $api->getGiftsPending();
 
-        $this->assertTrue(is_array($result));
+        $this->assertInstanceOf('Boomstarter\GiftIterator', $result);
         $this->assertEquals(1, count($result));
         $this->assertInstanceOf('Boomstarter\Gift', $result[0]);
     }
@@ -136,7 +137,7 @@ class APITest extends PHPUnit_Framework_TestCase
 
         $result = $api->getGiftsDelivered();
 
-        $this->assertTrue(is_array($result));
+        $this->assertInstanceOf('Boomstarter\GiftIterator', $result);
         $this->assertEquals(1, count($result));
         $this->assertInstanceOf('Boomstarter\Gift', $result[0]);
     }
@@ -159,7 +160,7 @@ class APITest extends PHPUnit_Framework_TestCase
 
         $result = $api->getGiftsShipping();
 
-        $this->assertTrue(is_array($result));
+        $this->assertInstanceOf('Boomstarter\GiftIterator', $result);
         $this->assertEquals(1, count($result));
         $this->assertInstanceOf('Boomstarter\Gift', $result[0]);
     }

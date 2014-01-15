@@ -438,6 +438,22 @@ class Transport
 }
 
 
+class GiftIterator extends \ArrayIterator
+{
+    private $total_count = 0;
+
+    public function getTotalCount()
+    {
+        return $this->total_count;
+    }
+
+    public function setTotalCount($total_count)
+    {
+        $this->total_count = $total_count;
+    }
+}
+
+
 class GiftFactory
 {
     public static function getGift($transport, $properties)
@@ -514,11 +530,11 @@ class API
      * @param $status NULL|'pending'|'shipping'|'delivered' статус
      * @param $limit int Количество. Сколько подарков вернуть за раз
      * @param $offset int Отступ. Сколько подарков пропустить с начала
-     * @return array(Gift)  Возвращает массив подарков
+     * @return GiftIterator()  Возвращает массив подарков
      */
     private function getGifts($status, $limit, $offset)
     {
-        $result = array();
+        $result = new GiftIterator();
         $data = array();
 
         // limit, offset
@@ -538,12 +554,14 @@ class API
         }
 
         // request
-        $array = $this->getTransport()->get($url, $data);
-        $items = $array['gifts'];
+        $response = $this->getTransport()->get($url, $data);
+        $items = $response['gifts'];
 
         foreach($items as $item) {
             $result[] = GiftFactory::getGift($this->getTransport(), $item);
         }
+
+        $result->setTotalCount($response['_metadata']['total_count']);
 
         return $result;
     }
@@ -709,7 +727,6 @@ class Gift
 // TODO что с Gift::owner
 // TODO что с Gift::location:country
 // TODO что с Gift::location:city
-// TODO как отдавать _metadata.total_count ---> через ArrayIterator::getTotalCount()
 // TODO что возвращает Gift::order()
 // TODO что возвращает Gift::schedule()
 // TODO что возвращает Gift::setState()
