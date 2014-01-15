@@ -7,7 +7,7 @@
  */
 require_once __DIR__ . '/../Boomstarter/API.php';
 
-class CurlRequestTest extends PHPUnit_Framework_TestCase
+class HttpRequestStreamTest extends PHPUnit_Framework_TestCase
 {
     protected static $server = NULL;
 
@@ -56,10 +56,10 @@ class CurlRequestTest extends PHPUnit_Framework_TestCase
     {
         $url = 'http://localhost:8000/api/v1.1/partners/gifts';
 
-        $request = new Boomstarter\CurlRequest($url);
+        $request = new Boomstarter\HttpRequestStream($url);
 
-        $request->setOption(CURLOPT_RETURNTRANSFER, TRUE);
-        $request->setOption(CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+        $request->setOption('method', "GET");
+        $request->setOption('header', 'Content-Type: application/json\r\n');
 
         $result = $request->execute();
 

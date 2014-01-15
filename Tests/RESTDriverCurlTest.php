@@ -16,8 +16,8 @@ class RESTDriverCurlTest extends PHPUnit_Framework_TestCase
      */
     private function getMockedDriver($url, $expected)
     {
-        // override CurlRequest::execute()
-        $request = $this->getMockBuilder('Boomstarter\CurlRequest')
+        // override HttpRequestCurl::execute()
+        $request = $this->getMockBuilder('Boomstarter\HttpRequestCurl')
             ->setConstructorArgs(array($url))
             ->setMethods(array('execute'))
             ->getMock();

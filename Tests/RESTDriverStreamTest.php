@@ -16,8 +16,8 @@ class RESTDriverStreamTest extends PHPUnit_Framework_TestCase
      */
     private function getMockedDriver($url, $expected)
     {
-        // override StreamRequest::execute()
-        $request = $this->getMockBuilder('Boomstarter\StreamRequest')
+        // override HttpRequestStream::execute()
+        $request = $this->getMockBuilder('Boomstarter\HttpRequestStream')
             ->setConstructorArgs(array($url))
             ->setMethods(array('execute'))
             ->getMock();

@@ -43,7 +43,7 @@ interface IRESTDriver
  *
  * @package Boomstarter
  */
-class CurlRequest implements IHttpRequest
+class HttpRequestCurl implements IHttpRequest
 {
     /* @var mixed */
     private $handle = NULL;
@@ -88,7 +88,7 @@ class CurlRequest implements IHttpRequest
  *
  * @package Boomstarter
  */
-class StreamRequest implements IHttpRequest
+class HttpRequestStream implements IHttpRequest
 {
     /* @var mixed */
     private $handle = NULL;
@@ -150,7 +150,7 @@ class RESTDriverCurl implements IRESTDriver
 {
     public function getRequest($url)
     {
-        return new CurlRequest($url);
+        return new HttpRequestCurl($url);
     }
 
     /**
@@ -249,7 +249,7 @@ class RESTDriverStream implements IRESTDriver
 {
     public function getRequest($url)
     {
-        return new CurlRequest($url);
+        return new HttpRequestCurl($url);
     }
 
     /**
