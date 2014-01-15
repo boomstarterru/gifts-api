@@ -7,7 +7,7 @@
  */
 require_once __DIR__ . '/../Boomstarter/API.php';
 
-class RESTDriverStreamTest extends PHPUnit_Framework_TestCase
+class RestDriverStreamTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @param $url
@@ -26,8 +26,8 @@ class RESTDriverStreamTest extends PHPUnit_Framework_TestCase
             ->method('execute')
             ->will($this->returnValue($expected));
 
-        // override RESTDriverStream::getRequest()
-        $driver = $this->getMockBuilder('Boomstarter\RESTDriverStream')
+        // override RestDriverStream::getRequest()
+        $driver = $this->getMockBuilder('Boomstarter\RestDriverStream')
             ->setMethods(array('getRequest'))
             ->getMock();
 

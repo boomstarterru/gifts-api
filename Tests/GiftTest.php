@@ -15,8 +15,8 @@ class GiftTest extends PHPUnit_Framework_TestCase
      */
     private function getMockedTransport($expected)
     {
-        // override RESTDriverCurl::get() ::post() ::put() ::delete()
-        $driver = $this->getMockBuilder('Boomstarter\RESTDriverCurl')
+        // override RestDriverCurl::get() ::post() ::put() ::delete()
+        $driver = $this->getMockBuilder('Boomstarter\RestDriverCurl')
             ->setMethods(array('get', 'post', 'put', 'delete'))
             ->getMock();
 

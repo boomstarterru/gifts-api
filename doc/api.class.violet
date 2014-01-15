@@ -299,7 +299,7 @@ delete()</string>
    <object class="com.horstmann.violet.ClassNode" id="ClassNode6">
     <void property="name">
      <void property="text">
-      <string>CurlRequest</string>
+      <string>HttpRequestCurl</string>
      </void>
     </void>
    </object>
@@ -308,7 +308,7 @@ delete()</string>
      <string>x</string>
      <void method="set">
       <object idref="Point2D$Double8"/>
-      <double>1189.0</double>
+      <double>1146.0</double>
      </void>
     </void>
     <void class="java.awt.geom.Point2D$Double" method="getField">
@@ -319,7 +319,7 @@ delete()</string>
      </void>
     </void>
     <void method="setLocation">
-     <double>1189.0</double>
+     <double>1146.0</double>
      <double>215.0</double>
     </void>
    </object>
@@ -336,7 +336,7 @@ close()</string>
     </void>
     <void property="name">
      <void property="text">
-      <string>«HttpRequest»</string>
+      <string>«IHttpRequest»</string>
      </void>
     </void>
    </object>
@@ -399,7 +399,7 @@ close()</string>
    <object class="com.horstmann.violet.ClassNode" id="ClassNode8">
     <void property="name">
      <void property="text">
-      <string>StreamRequest</string>
+      <string>HttpRequestStream</string>
      </void>
     </void>
    </object>

@@ -25,10 +25,10 @@ interface IHttpRequest
 
 
 /**
- * Interface IRESTDriver Интерфейс для REST-драйверов
+ * Interface IRestDriver Интерфейс для REST-драйверов
  * @package Boomstarter
  */
-interface IRESTDriver
+interface IRestDriver
 {
     function put($url, $data);
     function post($url, $data);
@@ -146,7 +146,7 @@ class HttpRequestStream implements IHttpRequest
  *
  * @package Boomstarter
  */
-class RESTDriverCurl implements IRESTDriver
+class RestDriverCurl implements IRestDriver
 {
     public function getRequest($url)
     {
@@ -245,7 +245,7 @@ class RESTDriverCurl implements IRESTDriver
  * Для некоторых провайдеров без поддержки curl.
  * @package Boomstarter
  */
-class RESTDriverStream implements IRESTDriver
+class RestDriverStream implements IRestDriver
 {
     public function getRequest($url)
     {
@@ -341,33 +341,33 @@ class RESTDriverFactory
     /**
      * Автоматически выбирает подходящий драйвер
      *
-     * @return RESTDriverCurl|RESTDriverStream
+     * @return RestDriverCurl|RestDriverStream
      */
     public static function getAutomatic()
     {
         if (function_exists('curl_exec')) {
-            $driver = new RESTDriverCurl();
+            $driver = new RestDriverCurl();
         } else {
-            $driver = new RESTDriverStream();
+            $driver = new RestDriverStream();
         }
 
         return $driver;
     }
 
     /**
-     * @return RESTDriverCurl
+     * @return RestDriverCurl
      */
     public static function getCurl()
     {
-        return new RESTDriverCurl();
+        return new RestDriverCurl();
     }
 
     /**
-     * @return RESTDriverStream
+     * @return RestDriverStream
      */
     public static function getStream()
     {
-        return new RESTDriverStream();
+        return new RestDriverStream();
     }
 }
 
@@ -381,7 +381,7 @@ class RESTDriverFactory
  */
 class Transport
 {
-    /* @var IRESTDriver */
+    /* @var IRestDriver */
     private $driver = NULL;
     /* @var string */
     private $shop_uuid = NULL;
@@ -521,7 +521,7 @@ class Transport
 
     /**
      * @reserved
-     * @return IRESTDriver|RESTDriverCurl|RESTDriverStream
+     * @return IRestDriver|RestDriverCurl|RestDriverStream
      */
     public function getDriver()
     {
