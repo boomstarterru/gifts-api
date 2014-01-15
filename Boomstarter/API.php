@@ -350,7 +350,7 @@ class Transport
     /* @var string */
     private $shop_token = NULL;
     /* @var string */
-    private $api_url = 'https://boomstarter.ru';
+    private $api_url = 'https://boomstarter.ru/api/v1.1/partners';
 
     function __construct()
     {
@@ -380,7 +380,7 @@ class Transport
         $data["shop_uuid"] = $this->shop_uuid;
         $data["shop_token"] = $this->shop_token;
 
-        $response = $this->driver->get($this->api_url . $url, $data);
+        $response = $this->getDriver()->get($this->api_url . $url, $data);
         $result = json_decode($response, TRUE);
 
         return $result;
@@ -391,7 +391,7 @@ class Transport
         $data["shop_uuid"] = $this->shop_uuid;
         $data["shop_token"] = $this->shop_token;
 
-        $response = $this->driver->post($this->api_url . $url, $data);
+        $response = $this->getDriver()->post($this->api_url . $url, $data);
         $result = json_decode($response, TRUE);
 
         return $result;
@@ -402,7 +402,7 @@ class Transport
         $data["shop_uuid"] = $this->shop_uuid;
         $data["shop_token"] = $this->shop_token;
 
-        $response = $this->driver->put($this->api_url . $url, $data);
+        $response = $this->getDriver()->put($this->api_url . $url, $data);
         $result = json_decode($response, TRUE);
 
         return $result;
@@ -413,7 +413,7 @@ class Transport
         $data["shop_uuid"] = $this->shop_uuid;
         $data["shop_token"] = $this->shop_token;
 
-        $response = $this->driver->delete($this->api_url . $url, $data);
+        $response = $this->getDriver()->delete($this->api_url . $url, $data);
         $result = json_decode($response, TRUE);
 
         return $result;
@@ -429,6 +429,11 @@ class Transport
     {
         $this->driver = RESTDriverFactory::getStream();
         return $this;
+    }
+
+    public function getDriver()
+    {
+        return $this->driver;
     }
 }
 
@@ -527,9 +532,9 @@ class API
 
         // url
         if ($status) {
-            $url = '/api/v1.1/partners/gifts' . '/' . $status;
+            $url = '/gifts' . '/' . $status;
         } else {
-            $url = '/api/v1.1/partners/gifts';
+            $url = '/gifts';
         }
 
         // request
@@ -638,7 +643,7 @@ class Gift
 
     public function order($order_id)
     {
-        $url = "/api/v1.1/partners/gifts/{$this->uuid}/order";
+        $url = "/gifts/{$this->uuid}/order";
 
         $data = array(
             "order_id" => $order_id
@@ -651,7 +656,7 @@ class Gift
 
     public function schedule($delivery_date)
     {
-        $url = "/api/v1.1/partners/gifts/{$this->uuid}/schedule";
+        $url = "/gifts/{$this->uuid}/schedule";
 
         $data = array(
             "delivery_date" => $delivery_date
@@ -664,7 +669,7 @@ class Gift
 
     public function setState($delivery_state)
     {
-        $url = "/api/v1.1/partners/gifts/{$this->uuid}/delivery_state";
+        $url = "/gifts/{$this->uuid}/delivery_state";
 
         $data = array(
             "delivery_state" => $delivery_state
@@ -680,7 +685,5 @@ class Gift
 // TODO что с Gift::owner
 // TODO что с Gift::location:country
 // TODO что с Gift::location:city
-// TODO тесты драйверов
 // TODO тесты транспорта
-// TODO тесты mock CurlRequest, StreamRequest
 // TODO как отдавать _metadata.total_count
