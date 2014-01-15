@@ -7,193 +7,91 @@
  */
 require_once __DIR__ . '/../Boomstarter/API.php';
 
-use Boomstarter\Boomstarter;
-use Boomstarter\StreamDriver;
-/*
 class APITest extends PHPUnit_Framework_TestCase
 {
-    protected $api = NULL;
-    protected static $server = NULL;
-    protected $api_url = 'http://localhost:8000';
+    protected $api_url = 'http://localhost:8000/api/v1.1/partners';
     protected $shop_uuid = 'fcfdfc62-7c05-4642-8d43-d26b0c05b9e1';
     protected $shop_token = 'c50267d4-d08a-4fff-ad2b-87746088188a';
 
-    public function setUp()
+    /**
+     * @param $shop_uuid
+     * @param $shop_token
+     * @param $expected
+     * @return Boomstarter\API
+     */
+    private function getMockedApi($shop_uuid, $shop_token, $expected)
     {
-        $this->api = new \Boomstarter\API($this->shop_uuid, $this->shop_token);
-        $this->api->setAPIUrl($this->api_url);
+        // override Transport::get() ::post() ::put() ::delete()
+        $transport = $this->getMockBuilder('Boomstarter\Transport')
+            ->setMethods(array('get', 'post', 'put', 'delete'))
+            ->getMock();
 
-        parent::setUp();
+        $transport->expects($this->any())
+            ->method('get')
+            ->will($this->returnValue($expected));
+
+        $transport->expects($this->any())
+            ->method('post')
+            ->will($this->returnValue($expected));
+
+        $transport->expects($this->any())
+            ->method('put')
+            ->will($this->returnValue($expected));
+
+        $transport->expects($this->any())
+            ->method('delete')
+            ->will($this->returnValue($expected));
+
+        // override API::getTransport()
+        $api = $this->getMockBuilder('Boomstarter\API')
+            ->setConstructorArgs(array($shop_uuid, $shop_token))
+            ->setMethods(array('getTransport'))
+            ->getMock();
+
+        $api->expects($this->any())
+            ->method('getTransport')
+            ->will($this->returnValue($transport));
+
+        return $api;
     }
 
-    public static function setUpBeforeClass()
+    public function testGetGifts_NoGifts()
     {
-        // local web server
-        self::$server = self::startServer();
-    }
+        $expected = array(
+            'gifts' => array(),
+            '_metadata' => array(
+                'total_count' => 0
+            )
+        );
 
-    public static function tearDownAfterClass()
-    {
-        self::stopServer(self::$server);
-    }
+        $api = $this->getMockedApi($this->shop_uuid, $this->shop_token, $expected);
 
-    public function testGetGiftsAll()
-    {
-        $result = $this->api->getGiftsAll();
-
-        //$this->assertEquals('/api/v1.1/partners/gifts', parse_url($result['debug']['server']['REQUEST_URI'], PHP_URL_PATH));
-        $this->assertTrue(is_array($result));
-        $this->assertTrue(is_object($result[0]));
-        $this->assertInstanceOf("Boomstarter\Gift", $result[0]);
-        $this->assertObjectHasAttribute("pledged", $result[0]);
-
-        var_dump($result[0]);
-        //$this->assertTrue(is_array($result['_metadata']));
-        //$this->assertEquals($this->shop_uuid, $result['debug']['get']['shop_uuid']);
-        //$this->assertEquals($this->shop_token, $result['debug']['get']['shop_token']);
-    }
-
-    public function testGetPendingGifts()
-    {
-        $result = $this->bs->getPendingGifts();
-
-        $this->assertEquals('/api/v1.1/partners/gifts/pending', parse_url($result['debug']['server']['REQUEST_URI'], PHP_URL_PATH));
-        $this->assertTrue(is_array($result['gifts']));
-        $this->assertTrue(is_array($result['_metadata']));
-        $this->assertEquals($this->shop_uuid, $result['debug']['get']['shop_uuid']);
-        $this->assertEquals($this->shop_token, $result['debug']['get']['shop_token']);
-    }
-
-    public function testGetShippingGifts()
-    {
-        $result = $this->bs->getShippingGifts();
-
-        $this->assertEquals('/api/v1.1/partners/gifts/shipping', parse_url($result['debug']['server']['REQUEST_URI'], PHP_URL_PATH));
-        $this->assertTrue(is_array($result['gifts']));
-        $this->assertTrue(is_array($result['_metadata']));
-        $this->assertEquals($this->shop_uuid, $result['debug']['get']['shop_uuid']);
-        $this->assertEquals($this->shop_token, $result['debug']['get']['shop_token']);
-    }
-
-    public function testGetDeliveredGifts()
-    {
-        $result = $this->bs->getDeliveredGifts();
-
-        $this->assertEquals('/api/v1.1/partners/gifts/delivered', parse_url($result['debug']['server']['REQUEST_URI'], PHP_URL_PATH));
-        $this->assertTrue(is_array($result['gifts']));
-        $this->assertTrue(is_array($result['_metadata']));
-        $this->assertEquals($this->shop_uuid, $result['debug']['get']['shop_uuid']);
-        $this->assertEquals($this->shop_token, $result['debug']['get']['shop_token']);
-    }
-
-    public function testOrderGift()
-    {
-        $uuid = '5b6a38b7-b555-43e6-8b00-45ea924b283d';
-        $order_id = '10002223321222';
-
-        $result = $this->bs->orderGift($uuid, $order_id);
-
-        $decoded_post = json_decode($result['debug']['raw_post'], TRUE);
+        $result = $api->getGiftsAll();
 
         $this->assertTrue(is_array($result));
-        $this->assertEquals("/api/v1.1/partners/gifts/$uuid/order", parse_url($result['debug']['server']['REQUEST_URI'], PHP_URL_PATH));
-        $this->assertEquals($this->shop_uuid, $decoded_post['shop_uuid']);
-        $this->assertEquals($this->shop_token, $decoded_post['shop_token']);
-        $this->assertEquals($order_id, $decoded_post['order_id']);
-        $this->assertEquals($order_id, $result['order_id']);
+        $this->assertEquals(0, count($result));
     }
 
-    public function testScheduleGift()
+    public function testGetGifts()
     {
-        $uuid = '5b6a38b7-b555-43e6-8b00-45ea924b283d';
-        $delivery_date = '2013-07-29';
+        $transport = new Boomstarter\Transport();
+        $gift = new Boomstarter\Gift($transport);
 
-        $result = $this->bs->scheduleGift($uuid, $delivery_date);
+        $expected = array(
+            'gifts' => array(
+                $gift
+            ),
+            '_metadata' => array(
+                'total_count' => 1
+            )
+        );
 
-        $decoded_post = json_decode($result['debug']['raw_post'], TRUE);
+        $api = $this->getMockedApi($this->shop_uuid, $this->shop_token, $expected);
 
-        $this->assertEquals("/api/v1.1/partners/gifts/$uuid/schedule", parse_url($result['debug']['server']['REQUEST_URI'], PHP_URL_PATH));
-        $this->assertEquals($this->shop_uuid, $decoded_post['shop_uuid']);
-        $this->assertEquals($this->shop_token, $decoded_post['shop_token']);
-        $this->assertEquals($delivery_date, $decoded_post['delivery_date']);
-        $this->assertEquals($delivery_date, \DateTime::createFromFormat(DATE_ATOM, $result['delivery_date'])->format("Y-m-d"));
-    }
+        $result = $api->getGiftsAll();
 
-    public function testDeliveryStateGift()
-    {
-        $uuid = '5b6a38b7-b555-43e6-8b00-45ea924b283d';
-        $delivery_state = 'delivery';
-
-        $result = $this->bs->deliveryStateGift($uuid, $delivery_state);
-
-        $decoded_put = json_decode($result['debug']['raw_put'], TRUE);
-
-        $this->assertEquals("/api/v1.1/partners/gifts/$uuid/delivery_state", parse_url($result['debug']['server']['REQUEST_URI'], PHP_URL_PATH));
-        $this->assertEquals($this->shop_uuid, $decoded_put['shop_uuid']);
-        $this->assertEquals($this->shop_token, $decoded_put['shop_token']);
-        $this->assertEquals($delivery_state, $decoded_put['delivery_state']);
-        $this->assertEquals('delivered', $result['delivery_state']);
-    }
-
-    public function testStreamDriver()
-    {
-        $this->bs->setRESTDriver(new StreamDriver());
-
-        $result = $this->bs->getAllGifts();
-
-        $expected = file_get_contents(__DIR__ . '/api/v1.1/partners/gifts/response.json');
-        $expected = json_decode($expected, TRUE);
-
-        $this->assertTrue(array_key_exists('gifts', $expected));
-
-        unset($result['debug']);
-        $this->assertEquals($expected, $result);
-    }
-
-    public function testLimit()
-    {
-        $this->bs->setLimit(7);
-        $result = $this->bs->getAllGifts();
-
-        $this->assertEquals(7, (int)$result['debug']['request']['limit']);
-    }
-
-    public function testOffset()
-    {
-        $this->bs->setOffset(2);
-        $result = $this->bs->getAllGifts();
-
-        $this->assertEquals(2, (int)$result['debug']['request']['offset']);
-    }
-
-    private function startServer()
-    {
-        $descriptor = array();
-
-        $server = proc_open('php -S localhost:8000 router.php', $descriptor, $pipes, __DIR__);
-        sleep(2);
-
-        return $server;
-    }
-
-    private function stopServer($server)
-    {
-        $status = proc_get_status($server);
-
-        if ($status['running'] == true) {
-            $ppid = $status['pid'];
-
-            $pids = preg_split('/\s+/', `ps -o pid --no-heading --ppid $ppid`);
-
-            foreach($pids as $pid) {
-                if(is_numeric($pid)) {
-                    posix_kill($pid, 9); //9 is the SIGKILL signal
-                }
-            }
-        }
-
-        proc_terminate($server);
-        proc_close($server);
+        $this->assertTrue(is_array($result));
+        $this->assertEquals(1, count($result));
+        $this->assertInstanceOf('Boomstarter\Gift', $result[0]);
     }
 }
-*/

@@ -538,11 +538,11 @@ class API
         }
 
         // request
-        $array = $this->transport->get($url, $data);
+        $array = $this->getTransport()->get($url, $data);
         $items = $array['gifts'];
 
         foreach($items as $item) {
-            $result[] = GiftFactory::getGift($this->transport, $item);
+            $result[] = GiftFactory::getGift($this->getTransport(), $item);
         }
 
         return $result;
@@ -570,20 +570,28 @@ class API
 
     public function useCurl()
     {
-        $this->transport->useCurl();
+        $this->getTransport()->useCurl();
         return $this;
     }
 
     public function useStream()
     {
-        $this->transport->useStream();
+        $this->getTransport()->useStream();
         return $this;
     }
 
-    public function setAPIUrl($url)
+    public function setApiUrl($url)
     {
-        $this->transport->setApiUrl($url);
+        $this->getTransport()->setApiUrl($url);
         return $this;
+    }
+
+    /**
+     * @return Transport
+     */
+    public function getTransport()
+    {
+        return $this->transport;
     }
 }
 
