@@ -78,7 +78,11 @@ class GiftTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($result));
     }
 
-    public function testSetState()
+    /**
+     * @covers Boomstarter\Gift::schedule
+     * @expectedException \Exception
+     */
+    public function testScheduleException()
     {
         $expected = '{"mocked": 1}';
 
@@ -86,9 +90,20 @@ class GiftTest extends PHPUnit_Framework_TestCase
 
         $gift = new Boomstarter\Gift($transport);
 
-        $delivery_state = "delivery";
+        $delivery_date = "The wrong date";
 
-        $result = $gift->setState($delivery_state);
+        $result = $gift->schedule($delivery_date);
+    }
+
+    public function testSetStateDelivery()
+    {
+        $expected = '{"mocked": 1}';
+
+        $transport = $this->getMockedTransport($expected);
+
+        $gift = new Boomstarter\Gift($transport);
+
+        $result = $gift->setStateDelivery();
 
         $this->assertTrue(is_array($result));
     }

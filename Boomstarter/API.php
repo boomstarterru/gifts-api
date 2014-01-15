@@ -839,15 +839,9 @@ class Gift
      *
      * @param $order_id string номер заказа
      * @return mixed
-     * @throws Exception при некорректном $order_id
      */
     public function order($order_id)
     {
-        // validate
-        if (!$order_id) {
-            throw new Exception("Unsupported order_id value: '{$order_id}'. Expected integer.");
-        }
-
         $url = "/gifts/{$this->uuid}/order";
 
         $data = array(
@@ -889,7 +883,7 @@ class Gift
      * @return mixed
      * @throws Exception при некорректном $delivery_state
      */
-    public function setState($delivery_state)
+    private function setState($delivery_state)
     {
         // validate
         if ($delivery_state != 'delivery') {
@@ -905,6 +899,16 @@ class Gift
         $result = $this->transport->put($url, $data);
 
         return $result;
+    }
+
+    /**
+     * Завершение доставки, клиенту вручили подарок.
+     *
+     * @return mixed
+     */
+    public function setStateDelivery()
+    {
+        return $this->setState('delivery');
     }
 }
 
