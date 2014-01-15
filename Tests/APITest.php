@@ -72,7 +72,7 @@ class APITest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, count($result));
     }
 
-    public function testGetGifts()
+    public function testGetGiftsAll()
     {
         $transport = new Boomstarter\Transport();
         $gift = new Boomstarter\Gift($transport);
@@ -93,5 +93,92 @@ class APITest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($result));
         $this->assertEquals(1, count($result));
         $this->assertInstanceOf('Boomstarter\Gift', $result[0]);
+    }
+
+    public function testGetGiftsPending()
+    {
+        $transport = new Boomstarter\Transport();
+        $gift = new Boomstarter\Gift($transport);
+
+        $expected = array(
+            'gifts' => array(
+                $gift
+            ),
+            '_metadata' => array(
+                'total_count' => 1
+            )
+        );
+
+        $api = $this->getMockedApi($this->shop_uuid, $this->shop_token, $expected);
+
+        $result = $api->getGiftsPending();
+
+        $this->assertTrue(is_array($result));
+        $this->assertEquals(1, count($result));
+        $this->assertInstanceOf('Boomstarter\Gift', $result[0]);
+    }
+
+    public function testGetGiftsDelivered()
+    {
+        $transport = new Boomstarter\Transport();
+        $gift = new Boomstarter\Gift($transport);
+
+        $expected = array(
+            'gifts' => array(
+                $gift
+            ),
+            '_metadata' => array(
+                'total_count' => 1
+            )
+        );
+
+        $api = $this->getMockedApi($this->shop_uuid, $this->shop_token, $expected);
+
+        $result = $api->getGiftsDelivered();
+
+        $this->assertTrue(is_array($result));
+        $this->assertEquals(1, count($result));
+        $this->assertInstanceOf('Boomstarter\Gift', $result[0]);
+    }
+
+    public function testGetGiftsShipping()
+    {
+        $transport = new Boomstarter\Transport();
+        $gift = new Boomstarter\Gift($transport);
+
+        $expected = array(
+            'gifts' => array(
+                $gift
+            ),
+            '_metadata' => array(
+                'total_count' => 1
+            )
+        );
+
+        $api = $this->getMockedApi($this->shop_uuid, $this->shop_token, $expected);
+
+        $result = $api->getGiftsShipping();
+
+        $this->assertTrue(is_array($result));
+        $this->assertEquals(1, count($result));
+        $this->assertInstanceOf('Boomstarter\Gift', $result[0]);
+    }
+
+    public function testUseCurl()
+    {
+        $api = new Boomstarter\API($this->shop_uuid, $this->shop_token);
+
+        $api->useCurl();
+
+        $this->assertInstanceOf('Boomstarter\RESTDriverCurl', $api->getTransport()->getDriver());
+    }
+
+    public function testUseStream()
+    {
+        $api = new Boomstarter\API($this->shop_uuid, $this->shop_token);
+
+        $api->useStream();
+
+        $this->assertInstanceOf('Boomstarter\RESTDriverStream', $api->getTransport()->getDriver());
     }
 }

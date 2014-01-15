@@ -580,12 +580,6 @@ class API
         return $this;
     }
 
-    public function setApiUrl($url)
-    {
-        $this->getTransport()->setApiUrl($url);
-        return $this;
-    }
-
     /**
      * @return Transport
      */
