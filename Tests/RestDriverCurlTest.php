@@ -7,12 +7,12 @@
  */
 require_once __DIR__ . '/../Boomstarter/API.php';
 
-class RESTDriverCurlTest extends PHPUnit_Framework_TestCase
+class RestDriverCurlTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @param $url
      * @param $expected
-     * @return Boomstarter\IRESTDriver
+     * @return Boomstarter\IRestDriver
      */
     private function getMockedDriver($url, $expected)
     {
@@ -26,8 +26,8 @@ class RESTDriverCurlTest extends PHPUnit_Framework_TestCase
             ->method('execute')
             ->will($this->returnValue($expected));
 
-        // override RESTDriverCurl::getRequest()
-        $driver = $this->getMockBuilder('Boomstarter\RESTDriverCurl')
+        // override RestDriverCurl::getRequest()
+        $driver = $this->getMockBuilder('Boomstarter\RestDriverCurl')
             ->setMethods(array('getRequest'))
             ->getMock();
 

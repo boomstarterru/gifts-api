@@ -7,28 +7,28 @@
  */
 require_once __DIR__ . '/../Boomstarter/API.php';
 
-class RESTDriverFactoryTest extends PHPUnit_Framework_TestCase
+class RestDriverFactoryTest extends PHPUnit_Framework_TestCase
 {
     public function testGetAutomatic()
     {
-        $driver = Boomstarter\RESTDriverFactory::getAutomatic();
+        $driver = Boomstarter\RestDriverFactory::getAutomatic();
 
         if (function_exists('curl_exec')) {
-            $this->assertInstanceOf('Boomstarter\RESTDriverCurl', $driver);
+            $this->assertInstanceOf('Boomstarter\RestDriverCurl', $driver);
         } else {
-            $this->assertInstanceOf('Boomstarter\RESTDriverStream', $driver);
+            $this->assertInstanceOf('Boomstarter\RestDriverStream', $driver);
         }
     }
 
     public function testUseCurl()
     {
-        $driver = Boomstarter\RESTDriverFactory::getCurl();
-        $this->assertInstanceOf('Boomstarter\RESTDriverCurl', $driver);
+        $driver = Boomstarter\RestDriverFactory::getCurl();
+        $this->assertInstanceOf('Boomstarter\RestDriverCurl', $driver);
     }
 
     public function testUseStream()
     {
-        $driver = Boomstarter\RESTDriverFactory::getStream();
-        $this->assertInstanceOf('Boomstarter\RESTDriverStream', $driver);
+        $driver = Boomstarter\RestDriverFactory::getStream();
+        $this->assertInstanceOf('Boomstarter\RestDriverStream', $driver);
     }
 }

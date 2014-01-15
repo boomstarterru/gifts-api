@@ -336,7 +336,7 @@ class RestDriverStream implements IRestDriver
  *
  * @package Boomstarter
  */
-class RESTDriverFactory
+class RestDriverFactory
 {
     /**
      * Автоматически выбирает подходящий драйвер
@@ -392,7 +392,7 @@ class Transport
 
     function __construct()
     {
-        $this->driver = RESTDriverFactory::getAutomatic();
+        $this->driver = RestDriverFactory::getAutomatic();
     }
 
     /**
@@ -504,7 +504,7 @@ class Transport
      */
     public function useCurl()
     {
-        $this->driver = RESTDriverFactory::getCurl();
+        $this->driver = RestDriverFactory::getCurl();
         return $this;
     }
 
@@ -515,7 +515,7 @@ class Transport
      */
     public function useStream()
     {
-        $this->driver = RESTDriverFactory::getStream();
+        $this->driver = RestDriverFactory::getStream();
         return $this;
     }
 

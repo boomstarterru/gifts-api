@@ -12,7 +12,7 @@ class RestDriverStreamTest extends PHPUnit_Framework_TestCase
     /**
      * @param $url
      * @param $expected
-     * @return Boomstarter\IRESTDriver
+     * @return Boomstarter\IRestDriver
      */
     private function getMockedDriver($url, $expected)
     {

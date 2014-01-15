@@ -15,8 +15,8 @@ class TransportTest extends PHPUnit_Framework_TestCase
      */
     private function getMockedTransport($expected)
     {
-        // override RESTDriverCurl::get() ::post() ::put() ::delete()
-        $driver = $this->getMockBuilder('Boomstarter\RESTDriverCurl')
+        // override RestDriverCurl::get() ::post() ::put() ::delete()
+        $driver = $this->getMockBuilder('Boomstarter\RestDriverCurl')
             ->setMethods(array('get', 'post', 'put', 'delete'))
             ->getMock();
 
@@ -155,7 +155,7 @@ class TransportTest extends PHPUnit_Framework_TestCase
         $driver = $transport->getDriver();
 
         $this->assertEquals($transport, $result);
-        $this->assertInstanceOf('Boomstarter\RESTDriverCurl', $driver);
+        $this->assertInstanceOf('Boomstarter\RestDriverCurl', $driver);
     }
 
     public function testUseStream()
@@ -167,6 +167,6 @@ class TransportTest extends PHPUnit_Framework_TestCase
         $driver = $transport->getDriver();
 
         $this->assertEquals($transport, $result);
-        $this->assertInstanceOf('Boomstarter\RESTDriverStream', $driver);
+        $this->assertInstanceOf('Boomstarter\RestDriverStream', $driver);
     }
 }
