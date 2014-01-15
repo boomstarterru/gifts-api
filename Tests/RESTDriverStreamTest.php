@@ -9,6 +9,11 @@ require_once __DIR__ . '/../Boomstarter/API.php';
 
 class RESTDriverStreamTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @param $url
+     * @param $expected
+     * @return Boomstarter\IRESTDriver
+     */
     private function getMockedDriver($url, $expected)
     {
         // override StreamRequest::execute()

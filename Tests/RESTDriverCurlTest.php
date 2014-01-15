@@ -9,6 +9,11 @@ require_once __DIR__ . '/../Boomstarter/API.php';
 
 class RESTDriverCurlTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @param $url
+     * @param $expected
+     * @return Boomstarter\IRESTDriver
+     */
     private function getMockedDriver($url, $expected)
     {
         // override CurlRequest::execute()
