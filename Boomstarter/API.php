@@ -838,7 +838,7 @@ class Gift
      * Подтверждение подарка с передачей ID-заказа магазина.
      *
      * @param $order_id string номер заказа
-     * @return mixed
+     * @return Gift
      */
     public function order($order_id)
     {
@@ -850,14 +850,16 @@ class Gift
 
         $result = $this->transport->post($url, $data);
 
-        return $result;
+        $gift = GiftFactory::getGift($this->transport, $result);
+
+        return $gift;
     }
 
     /**
      * Передача времени или даты доставки подарка.
      *
      * @param $delivery_date string|\DateTime Дата доставки. В любом формате поддерживаемом DateTime()
-     * @return mixed
+     * @return Gift
      */
     public function schedule($delivery_date)
     {
@@ -873,14 +875,16 @@ class Gift
 
         $result = $this->transport->post($url, $data);
 
-        return $result;
+        $gift = GiftFactory::getGift($this->transport, $result);
+
+        return $gift;
     }
 
     /**
      * Завершение доставки, клиенту вручили подарок.
      *
      * @param $delivery_state 'delivery' Параметр состояния доставки. (delivery - подарок доставлен)
-     * @return mixed
+     * @return Gift
      * @throws Exception при некорректном $delivery_state
      */
     private function setState($delivery_state)
@@ -898,7 +902,9 @@ class Gift
 
         $result = $this->transport->put($url, $data);
 
-        return $result;
+        $gift = GiftFactory::getGift($this->transport, $result);
+
+        return $gift;
     }
 
     /**
@@ -916,7 +922,5 @@ class Gift
 // TODO что с Gift::owner
 // TODO что с Gift::location:country
 // TODO что с Gift::location:city
-// TODO что возвращает Gift::order()
-// TODO что возвращает Gift::schedule()
-// TODO что возвращает Gift::setState()
-// TODO server debug info для интеграционного теста
+// TODO server debug info для теста Request
+

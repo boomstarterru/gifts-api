@@ -60,7 +60,7 @@ class GiftTest extends PHPUnit_Framework_TestCase
 
         $result = $gift->order($order_id);
 
-        $this->assertTrue(is_array($result));
+        $this->assertInstanceOf('Boomstarter\Gift', $result);
     }
 
     public function testSchedule()
@@ -75,7 +75,7 @@ class GiftTest extends PHPUnit_Framework_TestCase
 
         $result = $gift->schedule($delivery_date);
 
-        $this->assertTrue(is_array($result));
+        $this->assertInstanceOf('Boomstarter\Gift', $result);
     }
 
     /**
@@ -105,6 +105,6 @@ class GiftTest extends PHPUnit_Framework_TestCase
 
         $result = $gift->setStateDelivery();
 
-        $this->assertTrue(is_array($result));
+        $this->assertInstanceOf('Boomstarter\Gift', $result);
     }
 }
