@@ -924,3 +924,4 @@ class Gift
 // TODO что с Gift::location:city
 // TODO названия методов Gift
 
+
