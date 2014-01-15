@@ -56,7 +56,7 @@ class CurlRequest implements IHttpRequest
 
         if ($response === FALSE) {
             $info = curl_getinfo($this->handle);
-            throw new DriverException('Error occured during curl exec. Additioanl info: ' . var_export($info));
+            throw new DriverException('Error occurred during curl exec. Additional info: ' . var_export($info));
         }
 
         return $response;
@@ -100,7 +100,7 @@ class StreamRequest implements IHttpRequest
         $this->handle = fopen($this->url, 'rb', FALSE, $context);
 
         if (!$this->handle) {
-            throw new DriverException("Problem with {$this->url}");
+            throw new DriverException("Error occurred during open stream: {$this->url}");
         }
 
         $response = stream_get_contents($this->handle);
@@ -108,7 +108,7 @@ class StreamRequest implements IHttpRequest
         $this->close();
 
         if ($response === FALSE) {
-            throw new DriverException("Problem reading data from {$this->url}");
+            throw new DriverException("Problem when reading data from: {$this->url}");
         }
 
         return $response;
@@ -134,22 +134,24 @@ class StreamRequest implements IHttpRequest
  */
 class RESTDriverCurl implements IRESTDriver
 {
+    public function getRequest($url)
+    {
+        return new CurlRequest($url);
+    }
+
     /**
-     * Метод PUT
+     * Метод GET
      *
      * @param $url string
      * @param $data array
      * @return string
      * @throws \Boomstarter\DriverException
      */
-    public function put($url, $data)
+    public function get($url, $data)
     {
-        $curl = new CurlRequest($url);
+        $curl = $this->getRequest($url . '?' . http_build_query($data));
         $curl->setOption(CURLOPT_RETURNTRANSFER, TRUE);
         $curl->setOption(CURLOPT_HEADER, FALSE);
-        $curl->setOption(CURLOPT_POST, TRUE);
-        $curl->setOption(CURLOPT_CUSTOMREQUEST, 'PUT');
-        $curl->setOption(CURLOPT_POSTFIELDS, json_encode($data));
         $curl->setOption(CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
         $response = $curl->execute();
 
@@ -166,7 +168,7 @@ class RESTDriverCurl implements IRESTDriver
      */
     public function post($url, $data)
     {
-        $curl = new CurlRequest($url);
+        $curl = $this->getRequest($url);
         $curl->setOption(CURLOPT_RETURNTRANSFER, TRUE);
         $curl->setOption(CURLOPT_HEADER, FALSE);
         $curl->setOption(CURLOPT_POST, TRUE);
@@ -178,18 +180,21 @@ class RESTDriverCurl implements IRESTDriver
     }
 
     /**
-     * Метод GET
+     * Метод PUT
      *
      * @param $url string
      * @param $data array
      * @return string
      * @throws \Boomstarter\DriverException
      */
-    public function get($url, $data)
+    public function put($url, $data)
     {
-        $curl = new CurlRequest($url . '?' . http_build_query($data));
+        $curl = $this->getRequest($url);
         $curl->setOption(CURLOPT_RETURNTRANSFER, TRUE);
         $curl->setOption(CURLOPT_HEADER, FALSE);
+        $curl->setOption(CURLOPT_POST, TRUE);
+        $curl->setOption(CURLOPT_CUSTOMREQUEST, 'PUT');
+        $curl->setOption(CURLOPT_POSTFIELDS, json_encode($data));
         $curl->setOption(CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
         $response = $curl->execute();
 
@@ -206,7 +211,7 @@ class RESTDriverCurl implements IRESTDriver
      */
     public function delete($url, $data)
     {
-        $curl = new CurlRequest($url);
+        $curl = $this->getRequest($url);
         $curl->setOption(CURLOPT_RETURNTRANSFER, TRUE);
         $curl->setOption(CURLOPT_HEADER, FALSE);
         $curl->setOption(CURLOPT_POST, TRUE);
@@ -228,19 +233,24 @@ class RESTDriverCurl implements IRESTDriver
  */
 class RESTDriverStream implements IRESTDriver
 {
+    public function getRequest($url)
+    {
+        return new CurlRequest($url);
+    }
+
     /**
-     * Метод PUT
+     * Метод GET
      *
      * @param $url string
      * @param $data array
      * @return string
      * @throws \Boomstarter\DriverException
      */
-    public function put($url, $data)
+    public function get($url, $data)
     {
-        $stream = new StreamRequest($url);
-        $stream->setOption('method', "PUT");
-        $stream->setOption('content', json_encode($data));
+        $stream = $this->getRequest($url);;
+        $stream->setOption('method', "GET");
+        $stream->setOption('content', $data);
         $stream->setOption('header', 'Content-Type: application/json\r\n');
         $response = $stream->execute();
 
@@ -257,7 +267,7 @@ class RESTDriverStream implements IRESTDriver
      */
     public function post($url, $data)
     {
-        $stream = new StreamRequest($url);
+        $stream = $this->getRequest($url);
         $stream->setOption('method', "POST");
         $stream->setOption('content', json_encode($data));
         $stream->setOption('header', 'Content-Type: application/json\r\n');
@@ -267,18 +277,18 @@ class RESTDriverStream implements IRESTDriver
     }
 
     /**
-     * Метод GET
+     * Метод PUT
      *
      * @param $url string
      * @param $data array
      * @return string
      * @throws \Boomstarter\DriverException
      */
-    public function get($url, $data)
+    public function put($url, $data)
     {
-        $stream = new StreamRequest($url);
-        $stream->setOption('method', "GET");
-        $stream->setOption('content', $data);
+        $stream = $this->getRequest($url);
+        $stream->setOption('method', "PUT");
+        $stream->setOption('content', json_encode($data));
         $stream->setOption('header', 'Content-Type: application/json\r\n');
         $response = $stream->execute();
 
@@ -295,7 +305,7 @@ class RESTDriverStream implements IRESTDriver
      */
     public function delete($url, $data)
     {
-        $stream = new StreamRequest($url);
+        $stream = $this->getRequest($url);
         $stream->setOption('method', "GET");
         $stream->setOption('content', json_encode($data));
         $stream->setOption('header', 'Content-Type: application/json\r\n');
@@ -310,7 +320,7 @@ class RESTDriverFactory
 {
     public static function getAutomatic()
     {
-        if (function_exists('curl_version')) {
+        if (function_exists('curl_exec')) {
             $driver = new RESTDriverCurl();
         } else {
             $driver = new RESTDriverStream();
@@ -491,20 +501,33 @@ class API
      * Возвращает список подарков без фильтра по доставке,
      * все с сортировкой по дате завешения сбора средств.
      *
-     * @param $status string NULL|'pending'|'shipping'|'delivered' статус
+     * @param $status NULL|'pending'|'shipping'|'delivered' статус
+     * @param $limit int Количество. Сколько подарков вернуть за раз
+     * @param $offset int Отступ. Сколько подарков пропустить с начала
      * @return array(Gift)  Возвращает массив подарков
      */
-    private function getGifts($status=NULL)
+    private function getGifts($status, $limit, $offset)
     {
         $result = array();
         $data = array();
 
+        // limit, offset
+        if ($limit) {
+            $data['limit'] = $limit;
+        }
+
+        if ($offset) {
+            $data['offset'] = $offset;
+        }
+
+        // url
         if ($status) {
             $url = '/api/v1.1/partners/gifts' . '/' . $status;
         } else {
             $url = '/api/v1.1/partners/gifts';
         }
 
+        // request
         $array = $this->transport->get($url, $data);
         $items = $array['gifts'];
 
@@ -515,24 +538,24 @@ class API
         return $result;
     }
 
-    public function getGiftsAll()
+    public function getGiftsAll($limit=100, $offset=0)
     {
-        return $this->getGifts();
+        return $this->getGifts(NULL, $limit, $offset);
     }
 
-    public function getGiftsPending()
+    public function getGiftsPending($limit=100, $offset=0)
     {
-        return $this->getGifts('pending');
+        return $this->getGifts('pending', $limit, $offset);
     }
 
-    public function getGiftsShipping()
+    public function getGiftsShipping($limit=100, $offset=0)
     {
-        return $this->getGifts('shipping');
+        return $this->getGifts('shipping', $limit, $offset);
     }
 
-    public function getGiftsDelivered()
+    public function getGiftsDelivered($limit=100, $offset=0)
     {
-        return $this->getGifts('delivered');
+        return $this->getGifts('delivered', $limit, $offset);
     }
 
     public function useCurl()
@@ -672,3 +695,4 @@ class Gift
 // TODO тесты драйверов
 // TODO тесты транспорта
 // TODO тесты mock CurlRequest, StreamRequest
+// TODO как отдавать _metadata.total_count

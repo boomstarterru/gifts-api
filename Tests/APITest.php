@@ -5,12 +5,12 @@
  * Date: 09.12.13
  * Time: 18:20
  */
-include __DIR__ . '/../Boomstarter/API.php';
+require_once __DIR__ . '/../Boomstarter/API.php';
 
 use Boomstarter\Boomstarter;
 use Boomstarter\StreamDriver;
-
-class IndexControllerTest extends PHPUnit_Framework_TestCase
+/*
+class APITest extends PHPUnit_Framework_TestCase
 {
     protected $api = NULL;
     protected static $server = NULL;
@@ -196,3 +196,4 @@ class IndexControllerTest extends PHPUnit_Framework_TestCase
         proc_close($server);
     }
 }
+*/
