@@ -891,7 +891,7 @@ class Gift
     {
         // validate
         if ($delivery_state != 'delivery') {
-            throw new Exception("Unsupported delivery state: '{$delivery_state}'");
+            throw new Exception("Unsupported delivery state: '{$delivery_state}'. Expected 'delivery'");
         }
 
         $url = "/gifts/{$this->uuid}/delivery_state";
