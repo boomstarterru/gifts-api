@@ -685,5 +685,4 @@ class Gift
 // TODO что с Gift::owner
 // TODO что с Gift::location:country
 // TODO что с Gift::location:city
-// TODO тесты транспорта
 // TODO как отдавать _metadata.total_count
