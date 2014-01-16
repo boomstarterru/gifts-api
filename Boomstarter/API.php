@@ -629,7 +629,7 @@ class GiftIterator extends \ArrayIterator
     private $total_count = 0;
 
     /**
-     * @return int количество подарков всего на сеовере
+     * @return int количество подарков всего (доступных на сервере)
      */
     public function getTotalCount()
     {
@@ -637,7 +637,7 @@ class GiftIterator extends \ArrayIterator
     }
 
     /**
-     * @param $total_count Количество подарков всего на сеовере.
+     * @param $total_count Количество подарков всего (доступных на сервере)
      * @none Используется при инициализации списка.
      * @return $this
      */
