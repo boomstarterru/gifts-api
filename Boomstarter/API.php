@@ -249,7 +249,7 @@ class RestDriverStream implements IRestDriver
 {
     public function getRequest($url)
     {
-        return new HttpRequestCurl($url);
+        return new HttpRequestStream($url);
     }
 
     /**
@@ -262,9 +262,8 @@ class RestDriverStream implements IRestDriver
      */
     public function get($url, $data)
     {
-        $stream = $this->getRequest($url);;
+        $stream = $this->getRequest($url . '?' . http_build_query($data));
         $stream->setOption('method', "GET");
-        $stream->setOption('content', $data);
         $stream->setOption('header', 'Content-Type: application/json\r\n');
         $response = $stream->execute();
 
@@ -320,7 +319,7 @@ class RestDriverStream implements IRestDriver
     public function delete($url, $data)
     {
         $stream = $this->getRequest($url);
-        $stream->setOption('method', "GET");
+        $stream->setOption('method', "DELETE");
         $stream->setOption('content', json_encode($data));
         $stream->setOption('header', 'Content-Type: application/json\r\n');
         $response = $stream->execute();
