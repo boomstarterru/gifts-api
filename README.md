@@ -6,24 +6,99 @@ PHP-Library to work with Boomstarter Gifts API.
 Tested with PHP 5.3
 
 
-### Пример использования
+## Примеры использования
 
-Вывод списка подарков: Код товара (product_id) - Наименование (name)
+### 1. Вывод списка подарков
 
-    include('Boomstarter/API.php');
+Код товара (product_id) - Наименование (name)
 
-    $shop_uuid = 'fcfdfc62-7c05-4642-8d43-d26b0c05b9e1';
-    $shop_token = 'c50267d4-d08a-4fff-ad2b-87746088188a';
+    require_once('Boomstarter/API.php');
+
+    $shop_uuid = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX';
+    $shop_token = 'XXXXXXXXXXXXXXXXXXXXXX-X-XXXXXXXXX-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
     
     $api = new \Boomstarter\API($shop_uuid, $shop_token);
     
     $gifts = $api->getGiftsAll();
     
+    /* @var $gift Gift */
     foreach($gifts as $gift) {
-        echo "product_id: {$gift->product_id} - name: {$gift->name}\n";
+        echo "\t" . "UUID: " . $gift->uuid . "\n";
+        echo "\t" . "product_id: " . $gift->product_id . "\n";
+        echo "\t" . "name: " . $gift->name . "\n";
+        echo "\n";
     }
     
-### Класс API
+результат
+
+	UUID: 741f2a44-c438-45e8-bfba-daba60609060
+	product_id: 128298
+	name: Люстра 1172-6U
+
+	UUID: cc7cf13d-a12a-486d-aebb-272360a5f197
+	product_id: 35727
+	name: Люстра WL11401-6CH
+	
+
+### 2. Запрос десяти подарков
+
+Вывод общего количества (доступных), количества запрошенных (десять), списка подарков
+
+    require_once('Boomstarter/API.php');
+
+    $shop_uuid = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX';
+    $shop_token = 'XXXXXXXXXXXXXXXXXXXXXX-X-XXXXXXXXX-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+    
+    $api = new \Boomstarter\API($shop_uuid, $shop_token);
+    
+    $gifts = $api->getGiftsAll(10);
+    
+    echo "TotalCount: " . $gifts->getTotalCount() . "\n";
+    echo "Count: " . $gifts->count() . "\n";
+    echo "Gifts:\n";
+    
+    /* @var $gift Gift */
+    foreach($gifts as $gift) {
+        echo "\t" . "UUID: " . $gift->uuid . "\n";
+        echo "\t" . "product_id: " . $gift->product_id . "\n";
+        echo "\t" . "name: " . $gift->name . "\n";
+        echo "\n";
+    }
+
+результат
+
+    TotalCount: 2
+    Count: 2
+    Gifts:
+	    UUID: 741f2a44-c438-45e8-bfba-daba60609060
+	    product_id: 128298
+	    name: Люстра 1172-6U
+
+	    UUID: cc7cf13d-a12a-486d-aebb-272360a5f197
+	    product_id: 35727
+	    name: Люстра WL11401-6CH
+
+### 3. Обработка исключений
+
+    $api = new \Boomstarter\API($shop_uuid, $shop_token);
+    
+    try {
+    
+        $gifts = $api->getGiftsAll(10);
+    
+    } catch (\Boomstarter\Exception $e) {
+    
+        echo get_class($e) . ': ' . $e->getMessage() . "\n";
+        exit(1);
+    }
+    
+результат
+
+    Boomstarter\Exception: Empty response from API server.
+
+
+
+## Класс API
 
     class API
         function __construct($shop_uuid, $shop_token);
@@ -32,7 +107,7 @@ Tested with PHP 5.3
         function getGiftsShipping();
         function getGiftsDelivered();
 
-### Класс Gift
+## Класс Gift
 
 (подарок)
 
@@ -63,7 +138,7 @@ Tested with PHP 5.3
         function schedule($delivery_date);
         function setStateDelivery();
         
-### Схема
+## Структура
 
 ![scheme](https://raw2.github.com/boomstarterru/gifts-api/master/doc/scheme.jpg)
 
