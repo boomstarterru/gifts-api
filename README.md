@@ -14,8 +14,8 @@ Tested with PHP 5.3
 
     require_once('Boomstarter/API.php');
 
-    $shop_uuid = 'fcfdfc62-7c05-4642-8d43-d26b0c05b9e1';
-    $shop_token = 'c50267d4-d08a-4fff-ad2b-87746088188a';
+    $shop_uuid = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX';
+    $shop_token = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX';
     
     $api = new \Boomstarter\API($shop_uuid, $shop_token);
     
@@ -46,8 +46,8 @@ Tested with PHP 5.3
 
     require_once('Boomstarter/API.php');
 
-    $shop_uuid = 'fcfdfc62-7c05-4642-8d43-d26b0c05b9e1';
-    $shop_token = 'c50267d4-d08a-4fff-ad2b-87746088188a';
+    $shop_uuid = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX';
+    $shop_token = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX';
     
     $api = new \Boomstarter\API($shop_uuid, $shop_token);
     
