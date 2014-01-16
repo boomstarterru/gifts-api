@@ -460,14 +460,7 @@ class Transport
      */
     public function get($url, $data)
     {
-        $data["shop_uuid"] = $this->shop_uuid;
-        $data["shop_token"] = $this->shop_token;
-
-        $response = $this->getDriver()->get($this->api_url . $url, $data);
-
-        $result = $this->parseResponse($response);
-
-        return $result;
+        return $this->makeRequest("get", $url, $data);
     }
 
     /**
@@ -479,14 +472,7 @@ class Transport
      */
     public function post($url, $data)
     {
-        $data["shop_uuid"] = $this->shop_uuid;
-        $data["shop_token"] = $this->shop_token;
-
-        $response = $this->getDriver()->post($this->api_url . $url, $data);
-
-        $result = $this->parseResponse($response);
-
-        return $result;
+        return $this->makeRequest("post", $url, $data);
     }
 
     /**
@@ -498,14 +484,7 @@ class Transport
      */
     public function put($url, $data)
     {
-        $data["shop_uuid"] = $this->shop_uuid;
-        $data["shop_token"] = $this->shop_token;
-
-        $response = $this->getDriver()->put($this->api_url . $url, $data);
-
-        $result = $this->parseResponse($response);
-
-        return $result;
+        return $this->makeRequest("put", $url, $data);
     }
 
     /**
@@ -517,14 +496,7 @@ class Transport
      */
     public function delete($url, $data)
     {
-        $data["shop_uuid"] = $this->shop_uuid;
-        $data["shop_token"] = $this->shop_token;
-
-        $response = $this->getDriver()->delete($this->api_url . $url, $data);
-
-        $result = $this->parseResponse($response);
-
-        return $result;
+        return $this->makeRequest("delete", $url, $data);
     }
 
     /**
@@ -565,6 +537,24 @@ class Transport
         if (is_null($result)) {
             throw new Exception("Bad response from API server. Expected JSON. Response: {$response}");
         }
+
+        return $result;
+    }
+
+    /**
+     * @param $method "get"|"post"|"put"|"delete"
+     * @param $url string
+     * @param $data array
+     * @return array
+     */
+    private function makeRequest($method, $url, $data)
+    {
+        $data["shop_uuid"] = $this->shop_uuid;
+        $data["shop_token"] = $this->shop_token;
+
+        $response = $this->getDriver()->$method($this->api_url . $url, $data);
+
+        $result = $this->parseResponse($response);
 
         return $result;
     }
