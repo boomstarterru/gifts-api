@@ -12,26 +12,28 @@ Tested with PHP 5.3
 
 Профинансированных подарков. Т.е. на которые деньги уже собраны.
 
+```php
+require_once('Boomstarter/API.php');
 
-    require_once('Boomstarter/API.php');
-
-    $shop_uuid = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX';
-    $shop_token = 'XXXXXXXXXXXXXXXXXXXXXX-X-XXXXXXXXX-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+$shop_uuid = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX';
+$shop_token = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX';
     
-    $api = new \Boomstarter\API($shop_uuid, $shop_token);
+$api = new \Boomstarter\API($shop_uuid, $shop_token);
     
-    $gifts = $api->getGiftsAll();
+$gifts = $api->getGiftsAll();
     
-    /* @var $gift Gift */
-    foreach($gifts as $gift) {
-        echo "\t" . "UUID: " . $gift->uuid . "\n";
-        echo "\t" . "product_id: " . $gift->product_id . "\n";
-        echo "\t" . "name: " . $gift->name . "\n";
-        echo "\n";
-    }
+/* @var $gift Gift */
+foreach($gifts as $gift) {
+    echo "\t" . "UUID: " . $gift->uuid . "\n";
+    echo "\t" . "product_id: " . $gift->product_id . "\n";
+    echo "\t" . "name: " . $gift->name . "\n";
+    echo "\n";
+}
+```
     
 результат
 
+```shell
 	UUID: 741f2a44-c438-45e8-bfba-daba60609060
 	product_id: 128298
 	name: Люстра 1172-6U
@@ -39,35 +41,38 @@ Tested with PHP 5.3
 	UUID: cc7cf13d-a12a-486d-aebb-272360a5f197
 	product_id: 35727
 	name: Люстра WL11401-6CH
-	
+```	
 
 ### 2. Запрос десяти подарков
 
 Вывод общего количества (доступных), количества запрошенных (десять), списка подарков. Только профинансированные.
 
-    require_once('Boomstarter/API.php');
+```php
+require_once('Boomstarter/API.php');
 
-    $shop_uuid = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX';
-    $shop_token = 'XXXXXXXXXXXXXXXXXXXXXX-X-XXXXXXXXX-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+$shop_uuid = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX';
+$shop_token = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX';
     
-    $api = new \Boomstarter\API($shop_uuid, $shop_token);
+$api = new \Boomstarter\API($shop_uuid, $shop_token);
     
-    $gifts = $api->getGiftsAll(10);
+$gifts = $api->getGiftsAll(10);
     
-    echo "TotalCount: " . $gifts->getTotalCount() . "\n";
-    echo "Count: " . $gifts->count() . "\n";
-    echo "Gifts:\n";
+echo "TotalCount: " . $gifts->getTotalCount() . "\n";
+echo "Count: " . $gifts->count() . "\n";
+echo "Gifts:\n";
     
-    /* @var $gift Gift */
-    foreach($gifts as $gift) {
-        echo "\t" . "UUID: " . $gift->uuid . "\n";
-        echo "\t" . "product_id: " . $gift->product_id . "\n";
-        echo "\t" . "name: " . $gift->name . "\n";
-        echo "\n";
-    }
+/* @var $gift Gift */
+foreach($gifts as $gift) {
+    echo "\t" . "UUID: " . $gift->uuid . "\n";
+    echo "\t" . "product_id: " . $gift->product_id . "\n";
+    echo "\t" . "name: " . $gift->name . "\n";
+    echo "\n";
+}
+```
 
 результат
 
+```shell
     TotalCount: 2
     Count: 2
     Gifts:
@@ -78,9 +83,11 @@ Tested with PHP 5.3
 	    UUID: cc7cf13d-a12a-486d-aebb-272360a5f197
 	    product_id: 35727
 	    name: Люстра WL11401-6CH
+```
 
 ### 3. Обработка исключений
 
+```php
     $api = new \Boomstarter\API($shop_uuid, $shop_token);
     
     try {
@@ -92,11 +99,13 @@ Tested with PHP 5.3
         echo get_class($e) . ': ' . $e->getMessage() . "\n";
         exit(1);
     }
+```
     
 результат
 
+```shell
     Boomstarter\Exception: Empty response from API server.
-
+```
 
 
 ## Класс API
