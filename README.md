@@ -110,43 +110,49 @@ foreach($gifts as $gift) {
 
 ## Класс API
 
-    class API
-        function __construct($shop_uuid, $shop_token);
-        function getGiftsAll();
-        function getGiftsPending();
-        function getGiftsShipping();
-        function getGiftsDelivered();
+```php
+class API
+{
+    function __construct($shop_uuid, $shop_token);
+    function getGiftsAll();
+    function getGiftsPending();
+    function getGiftsShipping();
+    function getGiftsDelivered();
+}
+```
 
 ## Класс Gift
 
 (подарок)
 
-    class Gift
-        uuid
-        product_id
-        name
-        pledged
-        pledged_cents
-        comments
-        delivery_state
-        payout_id
-        order_id
-        owner
-        location
-        state
-        zipcode
-        region
-        district
-        city
-        street
-        house
-        building
-        construction
-        apartment
+```php
+class Gift
+    uuid
+    product_id
+    name
+    pledged
+    pledged_cents
+    comments
+    delivery_state
+    payout_id
+    order_id
+    owner
+    location
+    state
+    zipcode
+    region
+    district
+    city
+    street
+    house
+    building
+    construction
+    apartment
         
-        function order($order_id);
-        function schedule($delivery_date);
-        function setStateDelivery();
+    function order($order_id);
+    function schedule($delivery_date);
+    function setStateDelivery();
+```
         
 ## Структура
 
