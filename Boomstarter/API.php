@@ -64,7 +64,16 @@ class HttpRequestCurl implements IHttpRequest
 
         if ($response === FALSE) {
             $info = curl_getinfo($this->handle);
-            throw new DriverException('Error occurred during curl exec. Additional info: ' . json_encode($info));
+            throw new DriverException(
+                'Error occurred during curl exec. Additional info: ' . json_encode($info));
+        }
+
+        $http_code = curl_getinfo($this->handle, CURLINFO_HTTP_CODE);
+
+        if ($http_code != 200) {
+            $info = curl_getinfo($this->handle);
+            throw new DriverException(
+                'Unsupported request. Response code: ' . $http_code . '. Expected: 200. Additional info: ' . json_encode($info));
         }
 
         return $response;
@@ -114,23 +123,27 @@ class HttpRequestStream implements IHttpRequest
         $this->handle = fopen($this->url, 'rb', FALSE, $context);
 
         if (!$this->handle) {
-            throw new DriverException("Error occurred during open stream: {$this->url}");
+            throw new DriverException('Error occurred when open stream: ' . $this->url);
         }
 
         $response = stream_get_contents($this->handle);
 
-        $this->close();
-
         if ($response === FALSE) {
-            throw new DriverException("Problem when reading data from: {$this->url}");
+            $info = stream_get_meta_data($this->handle);
+            $this->close();
+            throw new DriverException(
+                'Error occurred during stream exec. Additional info: ' . json_encode($info));
         }
+
+        $this->close();
 
         return $response;
     }
 
     public function getInfo($name)
     {
-        return array();
+        $info = stream_get_meta_data($this->handle);
+        return $info[$name];
     }
 
     public function close()
