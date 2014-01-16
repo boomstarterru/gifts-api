@@ -50,17 +50,20 @@ class GiftTest extends PHPUnit_Framework_TestCase
 
     public function testOrder()
     {
-        $expected = '{"mocked": 1}';
+        $expected = file_get_contents(__DIR__ . '/api/v1.1/partners/gifts/5b6a38b7-b555-43e6-8b00-45ea924b283d/order/response.json');
+        $initial = json_decode($expected, TRUE);
+        $initial["mocked"] = 1;
+        $order_id = "10002223321222";
 
         $transport = $this->getMockedTransport($expected);
-
-        $gift = new Boomstarter\Gift($transport);
-
-        $order_id = "1";
+        $gift = Boomstarter\GiftFactory::getGift($transport, $initial);
+        $gift->order_id = "<old_id>";
 
         $result = $gift->order($order_id);
 
         $this->assertInstanceOf('Boomstarter\Gift', $result);
+        $this->assertObjectHasAttribute('order_id', $result);
+        $this->assertEquals($order_id, $result->order_id);
         $this->assertObjectHasAttribute('mocked', $result);
         $this->assertEquals(1, $result->mocked);
     }

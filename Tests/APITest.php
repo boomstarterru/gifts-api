@@ -182,4 +182,65 @@ class APITest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('Boomstarter\RESTDriverStream', $api->getTransport()->getDriver());
     }
+
+    public function testGetGiftsTotalCount()
+    {
+        $file_data = json_decode(file_get_contents(__DIR__ . '/api/v1.1/partners/gifts/response.json'), TRUE);
+        $gifts = $file_data['gifts'];
+
+        $expected = array(
+            'gifts' => $gifts,
+            '_metadata' => array(
+                'total_count' => 100
+            )
+        );
+
+        $api = $this->getMockedApi($this->shop_uuid, $this->shop_token, $expected);
+
+        $result = $api->getGiftsAll();
+
+        $this->assertInstanceOf('Boomstarter\GiftIterator', $result);
+        $this->assertEquals(1, count($result));
+        $this->assertInstanceOf('Boomstarter\Gift', $result[0]);
+        $this->assertEquals($expected['_metadata']['total_count'], $result->getTotalCount());
+    }
+
+    public function testGetGiftsComplex()
+    {
+        $json = json_decode(file_get_contents(__DIR__ . '/api/v1.1/partners/gifts/response.json'), TRUE);
+        $gifts = $json['gifts'];
+
+        $expected = array(
+            'gifts' => $gifts,
+            '_metadata' => array(
+                'total_count' => 100
+            )
+        );
+
+        $api = $this->getMockedApi($this->shop_uuid, $this->shop_token, $expected);
+
+        /* @var Boomstarter\GiftIterator */
+        $result = $api->getGiftsAll();
+
+        $this->assertInstanceOf('Boomstarter\GiftIterator', $result);
+        $this->assertEquals(1, count($result));
+        $this->assertEquals($expected['_metadata']['total_count'], $result->getTotalCount());
+
+        /* @var $gift Boomstarter\Gift */
+        foreach($result as $gift) {
+            $this->assertInstanceOf('Boomstarter\Gift', $gift);
+            $this->assertInstanceOf('Boomstarter\Location', $gift->location);
+            $this->assertInstanceOf('Boomstarter\City', $gift->location->city);
+            $this->assertInstanceOf('Boomstarter\Country', $gift->location->country);
+            $this->assertEquals($json['gifts'][0]['uuid'], $gift->uuid);
+            $this->assertEquals($json['gifts'][0]['name'], $gift->name);
+            $this->assertEquals($json['gifts'][0]['pledged'], $gift->pledged);
+            $this->assertEquals($json['gifts'][0]['location']['country']['id'], $gift->location->country->id);
+            $this->assertEquals($json['gifts'][0]['location']['city']['id'], $gift->location->city->id);
+            $this->assertEquals($json['gifts'][0]['location']['city']['name'], $gift->location->city->name);
+            $this->assertEquals($json['gifts'][0]['location']['city']['slug'], $gift->location->city->slug);
+            $this->assertEquals($json['gifts'][0]['owner']['email'], $gift->owner->email);
+            $this->assertEquals('boomstarter@boomstarter.ru', $gift->owner->email);
+        }
+    }
 }

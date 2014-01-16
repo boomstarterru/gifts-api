@@ -582,11 +582,9 @@ class GiftFactory
     public static function getGift($transport, $properties)
     {
         $gift = new Gift($transport);
-        
-        foreach($properties as $name=>$value) {
-            $gift->$name = $value;
-        }
-        
+
+        $gift->setProperties($properties);
+
         return $gift;
     }
 }
@@ -594,43 +592,110 @@ class GiftFactory
 
 class Country
 {
-    /* @var int */
+    /* @property int */
     public $id = NULL; // 20
-    /* @var string */
+    /* @property string */
     public $name = ""; // "Россия"
+
+    public function setProperties($properties)
+    {
+        if (!$properties) {
+            return $this;
+        }
+
+        foreach($properties as $name=>$value) {
+            $this->$name = $value;
+        }
+
+        return $this;
+    }
 }
 
 
 class City
 {
-    /* @var int */
+    /* @property int */
     public $id = NULL; // 49849
-    /* @var string */
+    /* @property string */
     public $name = ""; // "Москва"
-    /* @var string */
+    /* @property string */
     public $slug = ""; // "moscow-ru"
+
+    public function setProperties($properties)
+    {
+        if (!$properties) {
+            return $this;
+        }
+
+        foreach($properties as $name=>$value) {
+            $this->$name = $value;
+        }
+
+        return $this;
+    }
 }
 
 
 class Location
 {
-    /* @var Country */
+    /* @property Country */
     public $country = NULL;
-    /* @var City */
+    /* @property City */
     public $city = NULL;
+
+    public function setProperties($properties)
+    {
+        if (!$properties) {
+            return $this;
+        }
+
+        foreach($properties as $name=>$value) {
+
+            if (strcmp($name, 'city') == 0) {
+
+                $city = new City();
+                $city->setProperties($value);
+                $this->city = $city;
+
+            } elseif (strcmp($name, 'country') == 0) {
+
+                $country = new Country();
+                $country->setProperties($value);
+                $this->country = $country;
+
+            } else {
+                $this->$name = $value;
+            }
+        }
+
+        return $this;
+    }
 }
 
 
 class Owner
 {
-    /* @var string */
+    /* @property string */
     public $email = ""; // "boomstarter@boomstarter.ru"
-    /* @var string */
+    /* @property string */
     public $phone = ""; // "79853867016"
-    /* @var string */
+    /* @property string */
     public $first_name = ""; // "Ivan"
-    /* @var string */
+    /* @property string */
     public $last_name = ""; // "Ivanov"
+
+    public function setProperties($properties)
+    {
+        if (!$properties) {
+            return $this;
+        }
+
+        foreach($properties as $name=>$value) {
+            $this->$name = $value;
+        }
+
+        return $this;
+    }
 }
 
 
@@ -783,47 +848,47 @@ class API
  */
 class Gift
 {
-    /* @var int */
+    /* @property int */
     public $pledged = NULL;    // 690.0
-    /* @var string */
+    /* @property string */
     public $product_id = NULL; // 25330
-    /* @var Location */
+    /* @property Location */
     public $location = NULL; // Location
-    /* @var Owner */
+    /* @property Owner */
     public $owner = NULL; // Owner
-    /* @var string */
+    /* @property string */
     public $payout_id = NULL;
-    /* @var string */
+    /* @property string */
     public $state = ""; // "success_funded"
-    /* @var string */
+    /* @property string */
     public $zipcode = NULL;
-    /* @var string */
+    /* @property string */
     public $comments = "";
-    /* @var string */
+    /* @property string */
     public $uuid = ""; // "5b6a38b7-b555-43e6-8b00-45ea924b283d"
-    /* @var string */
+    /* @property string */
     public $name = ""; // "Чехол ArtWizz SeeJacket Alu Anthrazit для iPhone4/4S (AZ515AT)"
-    /* @var int */
+    /* @property int */
     public $pledged_cents = NULL; // 69000
-    /* @var string */
+    /* @property string */
     public $delivery_state = ""; // "none"
-    /* @var string */
+    /* @property string */
     public $region = NULL;
-    /* @var string */
+    /* @property string */
     public $district = NULL;
-    /* @var string */
+    /* @property string */
     public $city = NULL;
-    /* @var string */
+    /* @property string */
     public $street = ""; // "awdawd"
-    /* @var string */
+    /* @property string */
     public $house = NULL;
-    /* @var string */
+    /* @property string */
     public $building = NULL;
-    /* @var string */
+    /* @property string */
     public $construction = NULL;
-    /* @var string */
+    /* @property string */
     public $apartment = NULL;
-    /* @var int */
+    /* @property int */
     public $order_id = NULL;
 
     /* @var Transport */
@@ -832,6 +897,30 @@ class Gift
     function __construct($transport)
     {
         $this->transport = $transport;
+    }
+
+    public function setProperties($properties)
+    {
+        foreach($properties as $name=>$value) {
+
+            if (strcmp($name, 'owner') == 0) {
+
+                $owner = new Owner();
+                $owner->setProperties($value);
+                $this->owner = $owner;
+
+            } elseif (strcmp($name, 'location') == 0) {
+
+                $location = new Location();
+                $location->setProperties($value);
+                $this->location = $location;
+
+            } else {
+                $this->$name = $value;
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -850,9 +939,9 @@ class Gift
 
         $result = $this->transport->post($url, $data);
 
-        $gift = GiftFactory::getGift($this->transport, $result);
+        $this->setProperties($result);
 
-        return $gift;
+        return $this;
     }
 
     /**
@@ -875,9 +964,9 @@ class Gift
 
         $result = $this->transport->post($url, $data);
 
-        $gift = GiftFactory::getGift($this->transport, $result);
+        $this->setProperties($result);
 
-        return $gift;
+        return $this;
     }
 
     /**
@@ -902,9 +991,9 @@ class Gift
 
         $result = $this->transport->put($url, $data);
 
-        $gift = GiftFactory::getGift($this->transport, $result);
+        $this->setProperties($result);
 
-        return $gift;
+        return $this;
     }
 
     /**
@@ -923,5 +1012,3 @@ class Gift
 // TODO что с Gift::location:country
 // TODO что с Gift::location:city
 // TODO названия методов Gift
-
-
