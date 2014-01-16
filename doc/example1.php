@@ -19,7 +19,7 @@ $api = new \Boomstarter\API($shop_uuid, $shop_token);
 $gifts = $api->getGiftsAll();
 
 // result
-/* @var $gift Gift */
+/* @var $gift Boomstarter\Gift */
 foreach($gifts as $gift) {
     echo "\t" . "UUID: " . $gift->uuid . "\n";
     echo "\t" . "product_id: " . $gift->product_id . "\n";

@@ -23,7 +23,7 @@ echo "TotalCount: " . $gifts->getTotalCount() . "\n";
 echo "Count: " . $gifts->count() . "\n";
 echo "Gifts:\n";
 
-// @var $gift Gift
+/* @var $gift Boomstarter\Gift */
 foreach($gifts as $gift) {
     echo "\t" . "UUID: " . $gift->uuid . "\n";
     echo "\t" . "product_id: " . $gift->product_id . "\n";
