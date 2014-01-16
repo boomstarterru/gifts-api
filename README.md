@@ -78,7 +78,26 @@ Tested with PHP 5.3
 	    product_id: 35727
 	    name: Люстра WL11401-6CH
 
+### 3. Обработка исключений
+
+    $api = new \Boomstarter\API($shop_uuid, $shop_token);
     
+    try {
+    
+        $gifts = $api->getGiftsAll(10);
+    
+    } catch (\Boomstarter\Exception $e) {
+    
+        echo get_class($e) . ': ' . $e->getMessage() . "\n";
+        exit(1);
+    }
+    
+результат
+
+    Boomstarter\Exception: Empty response from API server.
+
+
+
 ## Класс API
 
     class API
