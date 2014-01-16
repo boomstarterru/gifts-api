@@ -45,7 +45,7 @@ foreach($gifts as $gift) {
 
 ### 2. Запрос десяти подарков
 
-Вывод общего количества (доступных), количества запрошенных (десять), списка подарков. Только профинансированные.
+Вывод общего количества доступных (TotalCount), количества запрошенных (Count), списка подарков. Только профинансированные.
 
 ```php
 require_once('Boomstarter/API.php');
@@ -73,8 +73,8 @@ foreach($gifts as $gift) {
 результат
 
 ```shell
-    TotalCount: 2
-    Count: 2
+    TotalCount: 100
+    Count: 10
     Gifts:
 	    UUID: 741f2a44-c438-45e8-bfba-daba60609060
 	    product_id: 128298
@@ -83,6 +83,8 @@ foreach($gifts as $gift) {
 	    UUID: cc7cf13d-a12a-486d-aebb-272360a5f197
 	    product_id: 35727
 	    name: Люстра WL11401-6CH
+	    
+            ...
 ```
 
 ### 3. Обработка исключений
@@ -98,6 +100,7 @@ foreach($gifts as $gift) {
     
         echo get_class($e) . ': ' . $e->getMessage() . "\n";
         exit(1);
+        
     }
 ```
     
