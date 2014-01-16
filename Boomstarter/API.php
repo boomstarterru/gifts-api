@@ -178,6 +178,10 @@ class HttpRequestStream implements IHttpRequest
  */
 class RestDriverCurl implements IRestDriver
 {
+    const REQUEST_METHOD_GET = "GET";
+    const REQUEST_METHOD_POST = "POST";
+    const REQUEST_METHOD_PUT = "PUT";
+    const REQUEST_METHOD_DELETE = "DELETE";
     const USER_AGENT = 'Boomstarter Gifts PHP library; Curl';
 
     public function getRequest($url)
@@ -195,7 +199,7 @@ class RestDriverCurl implements IRestDriver
      */
     public function get($url, $data)
     {
-        return $this->makeRequest("GET", $url . '?' . http_build_query($data), $data);
+        return $this->makeRequest(self::REQUEST_METHOD_GET, $url, $data);
     }
 
     /**
@@ -208,7 +212,7 @@ class RestDriverCurl implements IRestDriver
      */
     public function post($url, $data)
     {
-        return $this->makeRequest("POST", $url, $data);
+        return $this->makeRequest(self::REQUEST_METHOD_POST, $url, $data);
     }
 
     /**
@@ -221,7 +225,7 @@ class RestDriverCurl implements IRestDriver
      */
     public function put($url, $data)
     {
-        return $this->makeRequest("PUT", $url, $data);
+        return $this->makeRequest(self::REQUEST_METHOD_PUT, $url, $data);
     }
 
     /**
@@ -234,11 +238,23 @@ class RestDriverCurl implements IRestDriver
      */
     public function delete($url, $data)
     {
-        return $this->makeRequest("DELETE", $url, $data);
+        return $this->makeRequest(self::REQUEST_METHOD_DELETE, $url, $data);
     }
 
+    /**
+     * @param $method string
+     * @param $url string
+     * @param $data array
+     * @return mixed
+     */
     private function makeRequest($method, $url, $data)
     {
+        switch ($method) {
+            case self::REQUEST_METHOD_GET:
+                $url = $url . '?' . http_build_query($data);
+                break;
+        }
+
         $curl = $this->getRequest($url);
         $curl->setOption(CURLOPT_RETURNTRANSFER, TRUE);
         $curl->setOption(CURLOPT_HEADER, FALSE);
@@ -246,16 +262,9 @@ class RestDriverCurl implements IRestDriver
         $curl->setOption(CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 
         switch ($method) {
-            case 'GET':
-                $curl->setOption(CURLOPT_RETURNTRANSFER, TRUE);
-                $curl->setOption(CURLOPT_HEADER, FALSE);
-                $curl->setOption(CURLOPT_USERAGENT, self::USER_AGENT);
-                $curl->setOption(CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-                break;
-
-            case 'POST':
-            case 'PUT':
-            case 'DELETE':
+            case self::REQUEST_METHOD_POST:
+            case self::REQUEST_METHOD_PUT:
+            case self::REQUEST_METHOD_DELETE:
                 $curl->setOption(CURLOPT_CUSTOMREQUEST, $method);
                 $curl->setOption(CURLOPT_POST, TRUE);
                 $curl->setOption(CURLOPT_POSTFIELDS, json_encode($data));
@@ -277,6 +286,10 @@ class RestDriverCurl implements IRestDriver
  */
 class RestDriverStream implements IRestDriver
 {
+    const REQUEST_METHOD_GET = "GET";
+    const REQUEST_METHOD_POST = "POST";
+    const REQUEST_METHOD_PUT = "PUT";
+    const REQUEST_METHOD_DELETE = "DELETE";
     const USER_AGENT = 'Boomstarter Gifts PHP library; Stream';
 
     public function getRequest($url)
@@ -294,7 +307,7 @@ class RestDriverStream implements IRestDriver
      */
     public function get($url, $data)
     {
-        return $this->makeRequest("GET", $url . '?' . http_build_query($data), $data);
+        return $this->makeRequest(self::REQUEST_METHOD_GET, $url, $data);
     }
 
     /**
@@ -307,7 +320,7 @@ class RestDriverStream implements IRestDriver
      */
     public function post($url, $data)
     {
-        return $this->makeRequest("POST", $url, $data);
+        return $this->makeRequest(self::REQUEST_METHOD_POST, $url, $data);
     }
 
     /**
@@ -320,7 +333,7 @@ class RestDriverStream implements IRestDriver
      */
     public function put($url, $data)
     {
-        return $this->makeRequest("PUT", $url, $data);
+        return $this->makeRequest(self::REQUEST_METHOD_PUT, $url, $data);
     }
 
     /**
@@ -333,22 +346,36 @@ class RestDriverStream implements IRestDriver
      */
     public function delete($url, $data)
     {
-        return $this->makeRequest("DELETE", $url, $data);
+        return $this->makeRequest(self::REQUEST_METHOD_DELETE, $url, $data);
     }
 
     /**
-     * @param $method "GET"|"POST"|"PUT"|"DELETE"
+     * @param $method string
      * @param $url string
      * @param $data array
      * @return string
      */
     private function makeRequest($method, $url, $data)
     {
+        switch ($method) {
+            case self::REQUEST_METHOD_GET:
+                $url = $url . '?' . http_build_query($data);
+                break;
+        }
+
         $stream = $this->getRequest($url);
         $stream->setOption('method', $method);
-        $stream->setOption('content', json_encode($data));
         $stream->setOption('user_agent', self::USER_AGENT);
         $stream->setOption('header', 'Content-Type: application/json');
+
+        switch ($method) {
+            case self::REQUEST_METHOD_POST:
+            case self::REQUEST_METHOD_PUT:
+            case self::REQUEST_METHOD_DELETE:
+                $stream->setOption('content', json_encode($data));
+                break;
+        }
+
         $response = $stream->execute();
 
         return $response;
@@ -373,7 +400,11 @@ class RestDriverFactory
     {
         if (function_exists('curl_exec')) {
             $driver = new RestDriverCurl();
+
+        } elseif (in_array('http', stream_get_wrappers())) {
+            $driver = new RestDriverStream();
         } else {
+            // Can't detect method. Use stream as universal.
             $driver = new RestDriverStream();
         }
 
@@ -407,6 +438,11 @@ class RestDriverFactory
  */
 class Transport
 {
+    const REQUEST_METHOD_GET = "GET";
+    const REQUEST_METHOD_POST = "POST";
+    const REQUEST_METHOD_PUT = "PUT";
+    const REQUEST_METHOD_DELETE = "DELETE";
+
     /* @var IRestDriver */
     private $driver = NULL;
     /* @var string */
@@ -460,7 +496,7 @@ class Transport
      */
     public function get($url, $data)
     {
-        return $this->makeRequest("get", $url, $data);
+        return $this->makeRequest(self::REQUEST_METHOD_GET, $url, $data);
     }
 
     /**
@@ -472,7 +508,7 @@ class Transport
      */
     public function post($url, $data)
     {
-        return $this->makeRequest("post", $url, $data);
+        return $this->makeRequest(self::REQUEST_METHOD_POST, $url, $data);
     }
 
     /**
@@ -484,7 +520,7 @@ class Transport
      */
     public function put($url, $data)
     {
-        return $this->makeRequest("put", $url, $data);
+        return $this->makeRequest(self::REQUEST_METHOD_PUT, $url, $data);
     }
 
     /**
@@ -496,7 +532,7 @@ class Transport
      */
     public function delete($url, $data)
     {
-        return $this->makeRequest("delete", $url, $data);
+        return $this->makeRequest(self::REQUEST_METHOD_DELETE, $url, $data);
     }
 
     /**
@@ -542,18 +578,37 @@ class Transport
     }
 
     /**
-     * @param $method "get"|"post"|"put"|"delete"
+     * @param $method string
      * @param $url string
      * @param $data array
      * @return array
      */
     private function makeRequest($method, $url, $data)
     {
+        // Параметры авторизации
         $data["shop_uuid"] = $this->shop_uuid;
         $data["shop_token"] = $this->shop_token;
 
-        $response = $this->getDriver()->$method($this->api_url . $url, $data);
+        // Вызов метода через драйвер
+        switch ($method) {
+            case self::REQUEST_METHOD_GET:
+                $response = $this->getDriver()->get($this->api_url . $url, $data);
+                break;
+            case self::REQUEST_METHOD_POST:
+                $response = $this->getDriver()->post($this->api_url . $url, $data);
+                break;
+            case self::REQUEST_METHOD_PUT:
+                $response = $this->getDriver()->put($this->api_url . $url, $data);
+                break;
+            case self::REQUEST_METHOD_DELETE:
+                $response = $this->getDriver()->delete($this->api_url . $url, $data);
+                break;
+            default:
+                throw new Exception("Unsupported method: " . $method);
+                break;
+        }
 
+        // Обработка результата
         $result = $this->parseResponse($response);
 
         return $result;
