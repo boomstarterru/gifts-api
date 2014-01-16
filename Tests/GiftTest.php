@@ -53,14 +53,14 @@ class GiftTest extends PHPUnit_Framework_TestCase
         $expected = file_get_contents(__DIR__ . '/api/v1.1/partners/gifts/5b6a38b7-b555-43e6-8b00-45ea924b283d/order/response.json');
         $initial = json_decode($expected, TRUE);
         $initial["mocked"] = 1;
-        $order_id = "10002223321222";
-
         $transport = $this->getMockedTransport($expected);
+
         $gift = Boomstarter\GiftFactory::getGift($transport, $initial);
         $gift->order_id = "<old_id>";
 
         $this->assertEquals("<old_id>", $gift->order_id);
 
+        $order_id = "10002223321222"; // из файла
         $result = $gift->order($order_id);
 
         $this->assertInstanceOf('Boomstarter\Gift', $result);
@@ -72,17 +72,22 @@ class GiftTest extends PHPUnit_Framework_TestCase
 
     public function testSchedule()
     {
-        $expected = '{"mocked": 1}';
-
+        $expected = file_get_contents(__DIR__ . '/api/v1.1/partners/gifts/5b6a38b7-b555-43e6-8b00-45ea924b283d/schedule/response.json');
+        $initial = json_decode($expected, TRUE);
+        $initial["mocked"] = 1;
         $transport = $this->getMockedTransport($expected);
 
-        $gift = new Boomstarter\Gift($transport);
+        $gift = Boomstarter\GiftFactory::getGift($transport, $initial);
+        $gift->delivery_date = "<old_date>";
 
-        $delivery_date = "2014-01-01";
+        $this->assertEquals("<old_date>", $gift->delivery_date);
 
+        $delivery_date = "2013-07-29T00:00:00+04:00"; // из файла
         $result = $gift->schedule($delivery_date);
 
         $this->assertInstanceOf('Boomstarter\Gift', $result);
+        $this->assertObjectHasAttribute('delivery_date', $result);
+        $this->assertEquals($delivery_date, $result->delivery_date);
         $this->assertObjectHasAttribute('mocked', $result);
         $this->assertEquals(1, $result->mocked);
     }
@@ -106,15 +111,21 @@ class GiftTest extends PHPUnit_Framework_TestCase
 
     public function testSetStateDelivery()
     {
-        $expected = '{"mocked": 1}';
-
+        $expected = file_get_contents(__DIR__ . '/api/v1.1/partners/gifts/5b6a38b7-b555-43e6-8b00-45ea924b283d/delivery_state/response.json');
+        $initial = json_decode($expected, TRUE);
+        $initial["mocked"] = 1;
         $transport = $this->getMockedTransport($expected);
 
-        $gift = new Boomstarter\Gift($transport);
+        $gift = Boomstarter\GiftFactory::getGift($transport, $initial);
+        $gift->delivery_state = "<old_state>";
+
+        $this->assertEquals("<old_state>", $gift->delivery_state);
 
         $result = $gift->setStateDelivery();
 
         $this->assertInstanceOf('Boomstarter\Gift', $result);
+        $this->assertObjectHasAttribute('delivery_state', $result);
+        $this->assertEquals("delivered", $result->delivery_state);
         $this->assertObjectHasAttribute('mocked', $result);
         $this->assertEquals(1, $result->mocked);
     }

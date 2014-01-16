@@ -890,6 +890,8 @@ class Gift
     public $apartment = NULL;
     /* @property int */
     public $order_id = NULL;
+    /* @property string */
+    public $delivery_date = NULL;
 
     /* @var Transport */
     private $transport = NULL;
