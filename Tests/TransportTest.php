@@ -169,4 +169,26 @@ class TransportTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($transport, $result);
         $this->assertInstanceOf('Boomstarter\RestDriverStream', $driver);
     }
+
+    /**
+     * @covers Boomstarter\Transport::get()
+     * @expectedException \Exception
+     */
+    public function testGetException()
+    {
+        $expected = '<wrong json>';
+
+        $transport = $this->getMockedTransport($expected);
+
+        $url = '/gifts';
+
+        $data = array(
+            'shop_uuid' => 'fcfdfc62-7c05-4642-8d43-d26b0c05b9e1',
+            'shop_token' => 'c50267d4-d08a-4fff-ad2b-87746088188a',
+            'limit' => 100,
+            'offset' => 0
+        );
+
+        $result = $transport->get($url, $data);
+    }
 }

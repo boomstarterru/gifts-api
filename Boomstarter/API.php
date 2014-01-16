@@ -64,7 +64,7 @@ class HttpRequestCurl implements IHttpRequest
 
         if ($response === FALSE) {
             $info = curl_getinfo($this->handle);
-            throw new DriverException('Error occurred during curl exec. Additional info: ' . var_export($info));
+            throw new DriverException('Error occurred during curl exec. Additional info: ' . json_encode($info));
         }
 
         return $response;
@@ -449,7 +449,8 @@ class Transport
         $data["shop_token"] = $this->shop_token;
 
         $response = $this->getDriver()->get($this->api_url . $url, $data);
-        $result = json_decode($response, TRUE);
+
+        $result = $this->parseResponse($response);
 
         return $result;
     }
@@ -467,7 +468,8 @@ class Transport
         $data["shop_token"] = $this->shop_token;
 
         $response = $this->getDriver()->post($this->api_url . $url, $data);
-        $result = json_decode($response, TRUE);
+
+        $result = $this->parseResponse($response);
 
         return $result;
     }
@@ -485,7 +487,8 @@ class Transport
         $data["shop_token"] = $this->shop_token;
 
         $response = $this->getDriver()->put($this->api_url . $url, $data);
-        $result = json_decode($response, TRUE);
+
+        $result = $this->parseResponse($response);
 
         return $result;
     }
@@ -503,7 +506,8 @@ class Transport
         $data["shop_token"] = $this->shop_token;
 
         $response = $this->getDriver()->delete($this->api_url . $url, $data);
-        $result = json_decode($response, TRUE);
+
+        $result = $this->parseResponse($response);
 
         return $result;
     }
@@ -537,6 +541,17 @@ class Transport
     public function getDriver()
     {
         return $this->driver;
+    }
+
+    private function parseResponse($response)
+    {
+        $result = json_decode($response, TRUE);
+
+        if (is_null($result)) {
+            throw new Exception("Bad response from API server. Expected JSON. Response: {$response}");
+        }
+
+        return $result;
     }
 }
 
@@ -721,6 +736,10 @@ class API
     /* @var Transport */
     private $transport = NULL;
 
+    /**
+     * @param $shop_uuid string UUID магазина. Вида: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+     * @param $shop_token string Приватный токен. Вида: XXXXXXXXXXXXXXXXXXXXXX-X-XXXXXXXXX-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+     */
     function __construct($shop_uuid, $shop_token)
     {
         $this->transport = new Transport();
@@ -760,6 +779,11 @@ class API
 
         // request
         $response = $this->getTransport()->get($url, $data);
+
+        if (!isset($response['gifts'])) {
+            throw new Exception("Empty response from API server.");
+        }
+
         $items = $response['gifts'];
 
         foreach($items as $item) {
@@ -774,11 +798,11 @@ class API
     /**
      * Возвращает список подарков без фильтра по доставке. Т.е. все.
      *
-     * @param int $limit int Количество. Сколько подарков вернуть за раз
-     * @param int $offset int Отступ. Сколько подарков пропустить с начала
+     * @param int $limit int Количество. Задает лимит на количество возвращаемых элементов в ответе (максимальное значение: 250)
+     * @param int $offset int Сдвиг или пропуск первых N-элементов. Формула выглядит так: limit * (page - 1), где page страница.
      * @return GiftIterator Возвращает массив подарков
      */
-    public function getGiftsAll($limit=100, $offset=0)
+    public function getGiftsAll($limit=250, $offset=0)
     {
         return $this->getGifts(NULL, $limit, $offset);
     }
@@ -786,11 +810,11 @@ class API
     /**
      * Возвращает список подарков в ожидании доставки.
      *
-     * @param int $limit int Количество. Сколько подарков вернуть за раз
-     * @param int $offset int Отступ. Сколько подарков пропустить с начала
+     * @param int $limit int Количество. Задает лимит на количество возвращаемых элементов в ответе (максимальное значение: 250)
+     * @param int $offset int Сдвиг или пропуск первых N-элементов. Формула выглядит так: limit * (page - 1), где page страница.
      * @return GiftIterator Возвращает массив подарков
      */
-    public function getGiftsPending($limit=100, $offset=0)
+    public function getGiftsPending($limit=250, $offset=0)
     {
         return $this->getGifts('pending', $limit, $offset);
     }
@@ -798,11 +822,11 @@ class API
     /**
      * Возвращает список подарков со статусом "в доставке".
      *
-     * @param int $limit int Количество. Сколько подарков вернуть за раз
-     * @param int $offset int Отступ. Сколько подарков пропустить с начала
+     * @param int $limit int Количество. Задает лимит на количество возвращаемых элементов в ответе (максимальное значение: 250)
+     * @param int $offset int Сдвиг или пропуск первых N-элементов. Формула выглядит так: limit * (page - 1), где page страница.
      * @return GiftIterator Возвращает массив подарков
      */
-    public function getGiftsShipping($limit=100, $offset=0)
+    public function getGiftsShipping($limit=250, $offset=0)
     {
         return $this->getGifts('shipping', $limit, $offset);
     }
@@ -810,11 +834,11 @@ class API
     /**
      * Возвращает список доставленных подарков.
      *
-     * @param int $limit int Количество. Сколько подарков вернуть за раз
-     * @param int $offset int Отступ. Сколько подарков пропустить с начала
+     * @param int $limit int Количество. Задает лимит на количество возвращаемых элементов в ответе (максимальное значение: 250)
+     * @param int $offset int Сдвиг или пропуск первых N-элементов. Формула выглядит так: limit * (page - 1), где page страница.
      * @return GiftIterator Возвращает массив подарков
      */
-    public function getGiftsDelivered($limit=100, $offset=0)
+    public function getGiftsDelivered($limit=250, $offset=0)
     {
         return $this->getGifts('delivered', $limit, $offset);
     }
