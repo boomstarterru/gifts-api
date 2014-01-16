@@ -127,6 +127,7 @@ class API
 
 ```php
 class Gift
+{
     uuid
     product_id
     name
@@ -152,6 +153,7 @@ class Gift
     function order($order_id);
     function schedule($delivery_date);
     function setStateDelivery();
+}
 ```
         
 ## Структура
