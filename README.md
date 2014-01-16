@@ -21,8 +21,12 @@ Tested with PHP 5.3
     
     $gifts = $api->getGiftsAll();
     
+    /* @var $gift Gift */
     foreach($gifts as $gift) {
-        echo "product_id: {$gift->product_id} - name: {$gift->name}\n";
+        echo "\t" . "UUID: " . $gift->uuid . "\n";
+        echo "\t" . "product_id: " . $gift->product_id . "\n";
+        echo "\t" . "name: " . $gift->name . "\n";
+        echo "\n";
     }
     
 результат
