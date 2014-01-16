@@ -106,7 +106,7 @@ class GiftTest extends PHPUnit_Framework_TestCase
 
         $delivery_date = "The wrong date";
 
-        $result = $gift->schedule($delivery_date);
+        $gift->schedule($delivery_date);
     }
 
     public function testSetStateDelivery()

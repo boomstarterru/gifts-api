@@ -6,7 +6,7 @@
  * Time: 14:33
  */
 
-require_once('../Boomstarter/API.php');
+require_once(__DIR__ . '/../Boomstarter/API.php');
 
 // settings
 $shop_uuid = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX';

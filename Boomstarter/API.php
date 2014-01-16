@@ -716,6 +716,7 @@ class API
      * @param $limit int Количество. Сколько подарков вернуть за раз
      * @param $offset int Отступ. Сколько подарков пропустить с начала
      * @return GiftIterator  Возвращает массив подарков
+     * @throws \Boomstarter\Exception
      */
     private function getGifts($status, $limit, $offset)
     {
@@ -748,7 +749,7 @@ class API
         $items = $response['gifts'];
 
         foreach($items as $item) {
-            $result[] = new \Boomstarter\Gift($this->getTransport(), $item);
+            $result[] = new Gift($this->getTransport(), $item);
         }
 
         $result->setTotalCount($response['_metadata']['total_count']);

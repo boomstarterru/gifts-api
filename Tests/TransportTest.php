@@ -189,6 +189,6 @@ class TransportTest extends PHPUnit_Framework_TestCase
             'offset' => 0
         );
 
-        $result = $transport->get($url, $data);
+        $transport->get($url, $data);
     }
 }
