@@ -579,7 +579,7 @@ class Transport
     }
 
     /**
-     * @param $method string
+     * @param $method string "GET"|"POST"|"PUT"|"DELETE"
      * @param $url string
      * @param $data array
      * @return array
