@@ -84,7 +84,7 @@ foreach($gifts as $gift) {
 	    product_id: 35727
 	    name: Люстра WL11401-6CH
 	    
-            ...
+        ...
 ```
 
 ### 3. Обработка исключений
