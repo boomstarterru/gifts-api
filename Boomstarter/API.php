@@ -37,6 +37,23 @@ interface IRestDriver
 }
 
 
+class Model
+{
+    public function setProperties($properties)
+    {
+        if (!$properties) {
+            return $this;
+        }
+
+        foreach($properties as $name=>$value) {
+            $this->$name = $value;
+        }
+
+        return $this;
+    }
+}
+
+
 /**
  * Class CurlRequest
  * Драйвер для HTTP-запросов
@@ -178,14 +195,7 @@ class RestDriverCurl implements IRestDriver
      */
     public function get($url, $data)
     {
-        $curl = $this->getRequest($url . '?' . http_build_query($data));
-        $curl->setOption(CURLOPT_RETURNTRANSFER, TRUE);
-        $curl->setOption(CURLOPT_HEADER, FALSE);
-        $curl->setOption(CURLOPT_USERAGENT, self::USER_AGENT);
-        $curl->setOption(CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-        $response = $curl->execute();
-
-        return $response;
+        return $this->makeRequest("GET", $url . '?' . http_build_query($data), $data);
     }
 
     /**
@@ -198,16 +208,7 @@ class RestDriverCurl implements IRestDriver
      */
     public function post($url, $data)
     {
-        $curl = $this->getRequest($url);
-        $curl->setOption(CURLOPT_RETURNTRANSFER, TRUE);
-        $curl->setOption(CURLOPT_HEADER, FALSE);
-        $curl->setOption(CURLOPT_POST, TRUE);
-        $curl->setOption(CURLOPT_POSTFIELDS, json_encode($data));
-        $curl->setOption(CURLOPT_USERAGENT, self::USER_AGENT);
-        $curl->setOption(CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-        $response = $curl->execute();
-
-        return $response;
+        return $this->makeRequest("POST", $url, $data);
     }
 
     /**
@@ -220,17 +221,7 @@ class RestDriverCurl implements IRestDriver
      */
     public function put($url, $data)
     {
-        $curl = $this->getRequest($url);
-        $curl->setOption(CURLOPT_RETURNTRANSFER, TRUE);
-        $curl->setOption(CURLOPT_HEADER, FALSE);
-        $curl->setOption(CURLOPT_POST, TRUE);
-        $curl->setOption(CURLOPT_CUSTOMREQUEST, 'PUT');
-        $curl->setOption(CURLOPT_POSTFIELDS, json_encode($data));
-        $curl->setOption(CURLOPT_USERAGENT, self::USER_AGENT);
-        $curl->setOption(CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-        $response = $curl->execute();
-
-        return $response;
+        return $this->makeRequest("PUT", $url, $data);
     }
 
     /**
@@ -243,14 +234,34 @@ class RestDriverCurl implements IRestDriver
      */
     public function delete($url, $data)
     {
+        return $this->makeRequest("DELETE", $url, $data);
+    }
+
+    private function makeRequest($method, $url, $data)
+    {
         $curl = $this->getRequest($url);
         $curl->setOption(CURLOPT_RETURNTRANSFER, TRUE);
         $curl->setOption(CURLOPT_HEADER, FALSE);
-        $curl->setOption(CURLOPT_POST, TRUE);
-        $curl->setOption(CURLOPT_CUSTOMREQUEST, 'DELETE');
-        $curl->setOption(CURLOPT_POSTFIELDS, json_encode($data));
         $curl->setOption(CURLOPT_USERAGENT, self::USER_AGENT);
         $curl->setOption(CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+
+        switch ($method) {
+            case 'GET':
+                $curl->setOption(CURLOPT_RETURNTRANSFER, TRUE);
+                $curl->setOption(CURLOPT_HEADER, FALSE);
+                $curl->setOption(CURLOPT_USERAGENT, self::USER_AGENT);
+                $curl->setOption(CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+                break;
+
+            case 'POST':
+            case 'PUT':
+            case 'DELETE':
+                $curl->setOption(CURLOPT_CUSTOMREQUEST, $method);
+                $curl->setOption(CURLOPT_POST, TRUE);
+                $curl->setOption(CURLOPT_POSTFIELDS, json_encode($data));
+                break;
+        }
+
         $response = $curl->execute();
 
         return $response;
@@ -283,13 +294,7 @@ class RestDriverStream implements IRestDriver
      */
     public function get($url, $data)
     {
-        $stream = $this->getRequest($url . '?' . http_build_query($data));
-        $stream->setOption('method', "GET");
-        $stream->setOption('user_agent', self::USER_AGENT);
-        $stream->setOption('header', 'Content-Type: application/json');
-        $response = $stream->execute();
-
-        return $response;
+        return $this->makeRequest("GET", $url . '?' . http_build_query($data), $data);
     }
 
     /**
@@ -302,14 +307,7 @@ class RestDriverStream implements IRestDriver
      */
     public function post($url, $data)
     {
-        $stream = $this->getRequest($url);
-        $stream->setOption('method', "POST");
-        $stream->setOption('content', json_encode($data));
-        $stream->setOption('user_agent', self::USER_AGENT);
-        $stream->setOption('header', 'Content-Type: application/json');
-        $response = $stream->execute();
-
-        return $response;
+        return $this->makeRequest("POST", $url, $data);
     }
 
     /**
@@ -322,14 +320,7 @@ class RestDriverStream implements IRestDriver
      */
     public function put($url, $data)
     {
-        $stream = $this->getRequest($url);
-        $stream->setOption('method', "PUT");
-        $stream->setOption('content', json_encode($data));
-        $stream->setOption('user_agent', self::USER_AGENT);
-        $stream->setOption('header', 'Content-Type: application/json');
-        $response = $stream->execute();
-
-        return $response;
+        return $this->makeRequest("PUT", $url, $data);
     }
 
     /**
@@ -342,8 +333,19 @@ class RestDriverStream implements IRestDriver
      */
     public function delete($url, $data)
     {
+        return $this->makeRequest("DELETE", $url, $data);
+    }
+
+    /**
+     * @param $method "GET"|"POST"|"PUT"|"DELETE"
+     * @param $url string
+     * @param $data array
+     * @return string
+     */
+    private function makeRequest($method, $url, $data)
+    {
         $stream = $this->getRequest($url);
-        $stream->setOption('method', "DELETE");
+        $stream->setOption('method', $method);
         $stream->setOption('content', json_encode($data));
         $stream->setOption('user_agent', self::USER_AGENT);
         $stream->setOption('header', 'Content-Type: application/json');
@@ -601,57 +603,16 @@ class GiftIterator extends \ArrayIterator
 }
 
 
-/**
- * Class GiftFactory
- * Фабрика подарков
- *
- * @package Boomstarter
- */
-class GiftFactory
-{
-    /**
-     * Возвращает объект подарка.
-     * Устанавливает свойства $properties.
-     * Устанавливает транспорт $transport.
-     *
-     * @param $transport Transport Транспорт для вызова REST API
-     * @param $properties array Массив свойств. Ключ=>значение
-     * @return Gift
-     */
-    public static function getGift($transport, $properties)
-    {
-        $gift = new Gift($transport);
-
-        $gift->setProperties($properties);
-
-        return $gift;
-    }
-}
-
-
-class Country
+class Country extends Model
 {
     /* @property int */
     public $id = NULL; // 20
     /* @property string */
     public $name = ""; // "Россия"
-
-    public function setProperties($properties)
-    {
-        if (!$properties) {
-            return $this;
-        }
-
-        foreach($properties as $name=>$value) {
-            $this->$name = $value;
-        }
-
-        return $this;
-    }
 }
 
 
-class City
+class City extends Model
 {
     /* @property int */
     public $id = NULL; // 49849
@@ -675,7 +636,7 @@ class City
 }
 
 
-class Location
+class Location extends Model
 {
     /* @property Country */
     public $country = NULL;
@@ -712,7 +673,7 @@ class Location
 }
 
 
-class Owner
+class Owner extends Model
 {
     /* @property string */
     public $email = ""; // "boomstarter@boomstarter.ru"
@@ -722,19 +683,6 @@ class Owner
     public $first_name = ""; // "Ivan"
     /* @property string */
     public $last_name = ""; // "Ivanov"
-
-    public function setProperties($properties)
-    {
-        if (!$properties) {
-            return $this;
-        }
-
-        foreach($properties as $name=>$value) {
-            $this->$name = $value;
-        }
-
-        return $this;
-    }
 }
 
 
@@ -800,7 +748,7 @@ class API
         $items = $response['gifts'];
 
         foreach($items as $item) {
-            $result[] = GiftFactory::getGift($this->getTransport(), $item);
+            $result[] = new \Boomstarter\Gift($this->getTransport(), $item);
         }
 
         $result->setTotalCount($response['_metadata']['total_count']);
@@ -894,7 +842,7 @@ class API
  *
  * @package Boomstarter
  */
-class Gift
+class Gift extends Model
 {
     /* @property int */
     public $pledged = NULL;    // 690.0
@@ -944,9 +892,15 @@ class Gift
     /* @var Transport */
     private $transport = NULL;
 
-    function __construct($transport)
+    /**
+     * @param $transport Transport Транспорт для вызова REST API
+     * @param $properties array Массив свойств. Ключ=>значение
+     * @return Gift
+     */
+    function __construct($transport, $properties=array())
     {
         $this->transport = $transport;
+        $this->setProperties($properties);
     }
 
     public function setProperties($properties)
@@ -1056,5 +1010,3 @@ class Gift
         return $this->setState('delivery');
     }
 }
-
-// TODO названия методов Gift

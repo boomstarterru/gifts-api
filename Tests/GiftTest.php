@@ -55,7 +55,7 @@ class GiftTest extends PHPUnit_Framework_TestCase
         $initial["mocked"] = 1;
         $transport = $this->getMockedTransport($expected);
 
-        $gift = Boomstarter\GiftFactory::getGift($transport, $initial);
+        $gift = new \Boomstarter\Gift($transport, $initial);
         $gift->order_id = "<old_id>";
 
         $this->assertEquals("<old_id>", $gift->order_id);
@@ -77,7 +77,7 @@ class GiftTest extends PHPUnit_Framework_TestCase
         $initial["mocked"] = 1;
         $transport = $this->getMockedTransport($expected);
 
-        $gift = Boomstarter\GiftFactory::getGift($transport, $initial);
+        $gift = new \Boomstarter\Gift($transport, $initial);
         $gift->delivery_date = "<old_date>";
 
         $this->assertEquals("<old_date>", $gift->delivery_date);
@@ -116,7 +116,7 @@ class GiftTest extends PHPUnit_Framework_TestCase
         $initial["mocked"] = 1;
         $transport = $this->getMockedTransport($expected);
 
-        $gift = Boomstarter\GiftFactory::getGift($transport, $initial);
+        $gift = new \Boomstarter\Gift($transport, $initial);
         $gift->delivery_state = "<old_state>";
 
         $this->assertEquals("<old_state>", $gift->delivery_state);

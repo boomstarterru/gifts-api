@@ -6,7 +6,8 @@
  * Time: 10:13
  */
 
-class HTTPServer {
+class HTTPServer
+{
     protected static $server = NULL;
 
     public static function startServer()
