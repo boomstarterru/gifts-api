@@ -10,6 +10,9 @@
 
 namespace Boomstarter;
 
+const API_VERSION = "1.1";
+const USER_AGENT = "Boomstarter Gifts PHP library";
+
 
 class Exception extends \Exception {}
 class DriverException extends Exception {}
@@ -182,7 +185,6 @@ class RestDriverCurl implements IRestDriver
     const REQUEST_METHOD_POST = "POST";
     const REQUEST_METHOD_PUT = "PUT";
     const REQUEST_METHOD_DELETE = "DELETE";
-    const USER_AGENT = 'Boomstarter Gifts PHP library; Curl';
 
     public function getRequest($url)
     {
@@ -258,7 +260,7 @@ class RestDriverCurl implements IRestDriver
         $curl = $this->getRequest($url);
         $curl->setOption(CURLOPT_RETURNTRANSFER, TRUE);
         $curl->setOption(CURLOPT_HEADER, FALSE);
-        $curl->setOption(CURLOPT_USERAGENT, self::USER_AGENT);
+        $curl->setOption(CURLOPT_USERAGENT, USER_AGENT . ' (' . API_VERSION . '; ' . get_called_class() . ')');
         $curl->setOption(CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 
         switch ($method) {
@@ -290,7 +292,6 @@ class RestDriverStream implements IRestDriver
     const REQUEST_METHOD_POST = "POST";
     const REQUEST_METHOD_PUT = "PUT";
     const REQUEST_METHOD_DELETE = "DELETE";
-    const USER_AGENT = 'Boomstarter Gifts PHP library; Stream';
 
     public function getRequest($url)
     {
@@ -365,7 +366,7 @@ class RestDriverStream implements IRestDriver
 
         $stream = $this->getRequest($url);
         $stream->setOption('method', $method);
-        $stream->setOption('user_agent', self::USER_AGENT);
+        $stream->setOption('user_agent', USER_AGENT . ' (' . API_VERSION . '; ' . get_called_class() . ')');
         $stream->setOption('header', 'Content-Type: application/json');
 
         switch ($method) {
