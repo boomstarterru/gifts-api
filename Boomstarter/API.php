@@ -166,6 +166,7 @@ class RestDriverCurl implements IRestDriver
         $curl = $this->getRequest($url . '?' . http_build_query($data));
         $curl->setOption(CURLOPT_RETURNTRANSFER, TRUE);
         $curl->setOption(CURLOPT_HEADER, FALSE);
+        $curl->setOption(CURLOPT_USERAGENT, 'Boomstarter Gifts PHP library; Curl');
         $curl->setOption(CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
         $response = $curl->execute();
 
@@ -187,6 +188,7 @@ class RestDriverCurl implements IRestDriver
         $curl->setOption(CURLOPT_HEADER, FALSE);
         $curl->setOption(CURLOPT_POST, TRUE);
         $curl->setOption(CURLOPT_POSTFIELDS, json_encode($data));
+        $curl->setOption(CURLOPT_USERAGENT, 'Boomstarter Gifts PHP library; Curl');
         $curl->setOption(CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
         $response = $curl->execute();
 
@@ -209,6 +211,7 @@ class RestDriverCurl implements IRestDriver
         $curl->setOption(CURLOPT_POST, TRUE);
         $curl->setOption(CURLOPT_CUSTOMREQUEST, 'PUT');
         $curl->setOption(CURLOPT_POSTFIELDS, json_encode($data));
+        $curl->setOption(CURLOPT_USERAGENT, 'Boomstarter Gifts PHP library; Curl');
         $curl->setOption(CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
         $response = $curl->execute();
 
@@ -231,6 +234,7 @@ class RestDriverCurl implements IRestDriver
         $curl->setOption(CURLOPT_POST, TRUE);
         $curl->setOption(CURLOPT_CUSTOMREQUEST, 'DELETE');
         $curl->setOption(CURLOPT_POSTFIELDS, json_encode($data));
+        $curl->setOption(CURLOPT_USERAGENT, 'Boomstarter Gifts PHP library; Curl');
         $curl->setOption(CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
         $response = $curl->execute();
 
@@ -264,6 +268,7 @@ class RestDriverStream implements IRestDriver
     {
         $stream = $this->getRequest($url . '?' . http_build_query($data));
         $stream->setOption('method', "GET");
+        $stream->setOption('user_agent', 'Boomstarter Gifts PHP library; Stream');
         $stream->setOption('header', 'Content-Type: application/json\r\n');
         $response = $stream->execute();
 
@@ -283,6 +288,7 @@ class RestDriverStream implements IRestDriver
         $stream = $this->getRequest($url);
         $stream->setOption('method', "POST");
         $stream->setOption('content', json_encode($data));
+        $stream->setOption('user_agent', 'Boomstarter Gifts PHP library; Stream');
         $stream->setOption('header', 'Content-Type: application/json\r\n');
         $response = $stream->execute();
 
@@ -302,6 +308,7 @@ class RestDriverStream implements IRestDriver
         $stream = $this->getRequest($url);
         $stream->setOption('method', "PUT");
         $stream->setOption('content', json_encode($data));
+        $stream->setOption('user_agent', 'Boomstarter Gifts PHP library; Stream');
         $stream->setOption('header', 'Content-Type: application/json\r\n');
         $response = $stream->execute();
 
@@ -321,6 +328,7 @@ class RestDriverStream implements IRestDriver
         $stream = $this->getRequest($url);
         $stream->setOption('method', "DELETE");
         $stream->setOption('content', json_encode($data));
+        $stream->setOption('user_agent', 'Boomstarter Gifts PHP library; Stream');
         $stream->setOption('header', 'Content-Type: application/json\r\n');
         $response = $stream->execute();
 
