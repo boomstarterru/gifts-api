@@ -666,19 +666,6 @@ class City extends Model
     public $name = ""; // "Москва"
     /* @property string */
     public $slug = ""; // "moscow-ru"
-
-    public function setProperties($properties)
-    {
-        if (!$properties) {
-            return $this;
-        }
-
-        foreach($properties as $name=>$value) {
-            $this->$name = $value;
-        }
-
-        return $this;
-    }
 }
 
 
