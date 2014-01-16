@@ -43,6 +43,7 @@ class RestDriverCurl_wServerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("GET", $decoded['_debug']['server']['REQUEST_METHOD']);
         $this->assertEquals($data['shop_uuid'], $decoded['_debug']['get']['shop_uuid']);
         $this->assertEquals($data['shop_token'], $decoded['_debug']['get']['shop_token']);
+        $this->assertEquals("application/json", $decoded['_debug']['server']['HTTP_CONTENT_TYPE']);
     }
 
     public function testPost()
@@ -68,6 +69,7 @@ class RestDriverCurl_wServerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("POST", $decoded['_debug']['server']['REQUEST_METHOD']);
         $this->assertEquals($data['shop_uuid'], $decoded_post['shop_uuid']);
         $this->assertEquals($data['shop_token'], $decoded_post['shop_token']);
+        $this->assertEquals("application/json", $decoded['_debug']['server']['HTTP_CONTENT_TYPE']);
     }
 
     public function testPut()
@@ -93,6 +95,7 @@ class RestDriverCurl_wServerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("PUT", $decoded['_debug']['server']['REQUEST_METHOD']);
         $this->assertEquals($data['shop_uuid'], $decoded_put['shop_uuid']);
         $this->assertEquals($data['shop_token'], $decoded_put['shop_token']);
+        $this->assertEquals("application/json", $decoded['_debug']['server']['HTTP_CONTENT_TYPE']);
     }
 
     public function testDelete()
@@ -118,5 +121,6 @@ class RestDriverCurl_wServerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("DELETE", $decoded['_debug']['server']['REQUEST_METHOD']);
         $this->assertEquals($data['shop_uuid'], $decoded_delete['shop_uuid']);
         $this->assertEquals($data['shop_token'], $decoded_delete['shop_token']);
+        $this->assertEquals("application/json", $decoded['_debug']['server']['HTTP_CONTENT_TYPE']);
     }
 }
