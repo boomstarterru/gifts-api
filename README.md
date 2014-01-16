@@ -59,7 +59,7 @@ Tested with PHP 5.3
 результат
 
     TotalCount: 2
-    Count: 1
+    Count: 2
     Gifts:
 	    UUID: 741f2a44-c438-45e8-bfba-daba60609060
 	    product_id: 128298
