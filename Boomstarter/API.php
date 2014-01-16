@@ -815,7 +815,7 @@ class API
      * @param int $offset int Сдвиг или пропуск первых N-элементов. Формула выглядит так: limit * (page - 1), где page страница.
      * @return GiftIterator Возвращает массив подарков
      */
-    public function getGiftsAll($limit=250, $offset=0)
+    public function getGiftsAll($limit=50, $offset=0)
     {
         return $this->getGifts(NULL, $limit, $offset);
     }
@@ -827,7 +827,7 @@ class API
      * @param int $offset int Сдвиг или пропуск первых N-элементов. Формула выглядит так: limit * (page - 1), где page страница.
      * @return GiftIterator Возвращает массив подарков
      */
-    public function getGiftsPending($limit=250, $offset=0)
+    public function getGiftsPending($limit=50, $offset=0)
     {
         return $this->getGifts('pending', $limit, $offset);
     }
@@ -839,7 +839,7 @@ class API
      * @param int $offset int Сдвиг или пропуск первых N-элементов. Формула выглядит так: limit * (page - 1), где page страница.
      * @return GiftIterator Возвращает массив подарков
      */
-    public function getGiftsShipping($limit=250, $offset=0)
+    public function getGiftsShipping($limit=50, $offset=0)
     {
         return $this->getGifts('shipping', $limit, $offset);
     }
@@ -851,7 +851,7 @@ class API
      * @param int $offset int Сдвиг или пропуск первых N-элементов. Формула выглядит так: limit * (page - 1), где page страница.
      * @return GiftIterator Возвращает массив подарков
      */
-    public function getGiftsDelivered($limit=250, $offset=0)
+    public function getGiftsDelivered($limit=50, $offset=0)
     {
         return $this->getGifts('delivered', $limit, $offset);
     }
