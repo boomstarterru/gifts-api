@@ -59,6 +59,8 @@ class GiftTest extends PHPUnit_Framework_TestCase
         $gift = Boomstarter\GiftFactory::getGift($transport, $initial);
         $gift->order_id = "<old_id>";
 
+        $this->assertEquals("<old_id>", $gift->order_id);
+
         $result = $gift->order($order_id);
 
         $this->assertInstanceOf('Boomstarter\Gift', $result);
