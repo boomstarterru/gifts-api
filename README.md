@@ -44,9 +44,14 @@ Tested with PHP 5.3
 
 Вывод общего количества (доступных), количества запрошенных (десять), списка подарков
 
-    $api = new API('fcfdfc62-7c05-4642-8d43-d26b0c05b9e1', 'c50267d4-d08a-4fff-ad2b-87746088188a');
+    require_once('Boomstarter/API.php');
+
+    $shop_uuid = 'fcfdfc62-7c05-4642-8d43-d26b0c05b9e1';
+    $shop_token = 'c50267d4-d08a-4fff-ad2b-87746088188a';
     
-    $gifts = $api->getGiftsAll(1);
+    $api = new \Boomstarter\API($shop_uuid, $shop_token);
+    
+    $gifts = $api->getGiftsAll(10);
     
     echo "TotalCount: " . $gifts->getTotalCount() . "\n";
     echo "Count: " . $gifts->count() . "\n";
