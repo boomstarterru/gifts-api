@@ -10,4 +10,5 @@ $data['_debug']['get'] = $_GET;
 $data['_debug']['request'] = $_REQUEST;
 $data['_debug']['raw_post'] = isset($HTTP_RAW_POST_DATA) ? $HTTP_RAW_POST_DATA : NULL;
 $data['_debug']['raw_put'] = $_SERVER['REQUEST_METHOD'] === "PUT" ? file_get_contents('php://input') : array();
+$data['_debug']['raw_delete'] = $_SERVER['REQUEST_METHOD'] === "DELETE" ? file_get_contents('php://input') : array();
 echo json_encode($data);
