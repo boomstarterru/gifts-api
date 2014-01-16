@@ -10,7 +10,9 @@ Tested with PHP 5.3
 
 ### 1. Вывод списка подарков
 
-Код товара (product_id) - Наименование (name)
+* uuid - Boomstarter-код подарка
+* product_id - Код товара
+* name - Наименование товара
 
     require_once('Boomstarter/API.php');
 
