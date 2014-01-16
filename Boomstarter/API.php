@@ -269,7 +269,7 @@ class RestDriverStream implements IRestDriver
         $stream = $this->getRequest($url . '?' . http_build_query($data));
         $stream->setOption('method', "GET");
         $stream->setOption('user_agent', 'Boomstarter Gifts PHP library; Stream');
-        $stream->setOption('header', 'Content-Type: application/json\r\n');
+        $stream->setOption('header', 'Content-Type: application/json');
         $response = $stream->execute();
 
         return $response;
@@ -289,7 +289,7 @@ class RestDriverStream implements IRestDriver
         $stream->setOption('method', "POST");
         $stream->setOption('content', json_encode($data));
         $stream->setOption('user_agent', 'Boomstarter Gifts PHP library; Stream');
-        $stream->setOption('header', 'Content-Type: application/json\r\n');
+        $stream->setOption('header', 'Content-Type: application/json');
         $response = $stream->execute();
 
         return $response;
@@ -309,7 +309,7 @@ class RestDriverStream implements IRestDriver
         $stream->setOption('method', "PUT");
         $stream->setOption('content', json_encode($data));
         $stream->setOption('user_agent', 'Boomstarter Gifts PHP library; Stream');
-        $stream->setOption('header', 'Content-Type: application/json\r\n');
+        $stream->setOption('header', 'Content-Type: application/json');
         $response = $stream->execute();
 
         return $response;
@@ -329,7 +329,7 @@ class RestDriverStream implements IRestDriver
         $stream->setOption('method', "DELETE");
         $stream->setOption('content', json_encode($data));
         $stream->setOption('user_agent', 'Boomstarter Gifts PHP library; Stream');
-        $stream->setOption('header', 'Content-Type: application/json\r\n');
+        $stream->setOption('header', 'Content-Type: application/json');
         $response = $stream->execute();
 
         return $response;
