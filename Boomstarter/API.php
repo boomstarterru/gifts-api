@@ -583,6 +583,7 @@ class Transport
      * @param $url string
      * @param $data array
      * @return array
+     * @throws \Boomstarter\Exception
      */
     private function makeRequest($method, $url, $data)
     {
@@ -637,7 +638,7 @@ class GiftIterator extends \ArrayIterator
     }
 
     /**
-     * @param $total_count Количество подарков всего (доступных на сервере)
+     * @param $total_count int Количество подарков всего (доступных на сервере)
      * @none Используется при инициализации списка.
      * @return $this
      */
