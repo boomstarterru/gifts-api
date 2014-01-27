@@ -647,34 +647,50 @@ class GiftIterator extends \ArrayIterator
         $this->total_count = $total_count;
         return $this;
     }
+
+    public function asArray()
+    {
+        return (array)$this;
+    }
+
+    public function getValues($key)
+    {
+        $values = array();
+
+        foreach($this as $item) {
+            $values[] = $item->$key;
+        }
+
+        return $values;
+    }
 }
 
 
 class Country extends Model
 {
-    /* @property int */
+    /* @var int */
     public $id = NULL; // 20
-    /* @property string */
+    /* @var string */
     public $name = ""; // "Россия"
 }
 
 
 class City extends Model
 {
-    /* @property int */
+    /* @var int */
     public $id = NULL; // 49849
-    /* @property string */
+    /* @var string */
     public $name = ""; // "Москва"
-    /* @property string */
+    /* @var string */
     public $slug = ""; // "moscow-ru"
 }
 
 
 class Location extends Model
 {
-    /* @property Country */
+    /* @var \Boomstarter\Country */
     public $country = NULL;
-    /* @property City */
+    /* @var \Boomstarter\City */
     public $city = NULL;
 
     public function setProperties($properties)
@@ -709,13 +725,13 @@ class Location extends Model
 
 class Owner extends Model
 {
-    /* @property string */
+    /* @var string */
     public $email = ""; // "boomstarter@boomstarter.ru"
-    /* @property string */
+    /* @var string */
     public $phone = ""; // "79853867016"
-    /* @property string */
+    /* @var string */
     public $first_name = ""; // "Ivan"
-    /* @property string */
+    /* @var string */
     public $last_name = ""; // "Ivanov"
 }
 
@@ -869,6 +885,38 @@ class API
     {
         return $this->transport;
     }
+
+    /**
+     * @param $gift_uuid string
+     * @param $order_id string|int
+     * @return Gift
+     */
+    public function setGiftOrder($gift_uuid, $order_id)
+    {
+        $gift = new Gift($this->getTransport(), array('uuid' => $gift_uuid));
+        return $gift->order($order_id);
+    }
+
+    /**
+     * @param $gift_uuid string
+     * @param $delivery_date string|\DateTime
+     * @return Gift
+     */
+    public function setGiftSchedule($gift_uuid, $delivery_date)
+    {
+        $gift = new Gift($this->getTransport(), array('uuid' => $gift_uuid));
+        return $gift->schedule($delivery_date);
+    }
+
+    /**
+     * @param $gift_uuid string
+     * @return Gift
+     */
+    public function setGiftStateDelivery($gift_uuid)
+    {
+        $gift = new Gift($this->getTransport(), array('uuid' => $gift_uuid));
+        return $gift->setStateDelivery();
+    }
 }
 
 /**
@@ -879,49 +927,49 @@ class API
  */
 class Gift extends Model
 {
-    /* @property int */
+    /* @var int */
     public $pledged = NULL;    // 690.0
-    /* @property string */
+    /* @var string */
     public $product_id = NULL; // 25330
-    /* @property Location */
+    /* @var \Boomstarter\Location */
     public $location = NULL; // Location
-    /* @property Owner */
+    /* @var \Boomstarter\Owner */
     public $owner = NULL; // Owner
-    /* @property string */
+    /* @var string */
     public $payout_id = NULL;
-    /* @property string */
+    /* @var string */
     public $state = ""; // "success_funded"
-    /* @property string */
+    /* @var string */
     public $zipcode = NULL;
-    /* @property string */
+    /* @var string */
     public $comments = "";
-    /* @property string */
+    /* @var string */
     public $uuid = ""; // "5b6a38b7-b555-43e6-8b00-45ea924b283d"
-    /* @property string */
+    /* @var string */
     public $name = ""; // "Чехол ArtWizz SeeJacket Alu Anthrazit для iPhone4/4S (AZ515AT)"
-    /* @property int */
+    /* @var int */
     public $pledged_cents = NULL; // 69000
-    /* @property string */
+    /* @var string */
     public $delivery_state = ""; // "none"
-    /* @property string */
+    /* @var string */
     public $region = NULL;
-    /* @property string */
+    /* @var string */
     public $district = NULL;
-    /* @property string */
+    /* @var string */
     public $city = NULL;
-    /* @property string */
+    /* @var string */
     public $street = ""; // "awdawd"
-    /* @property string */
+    /* @var string */
     public $house = NULL;
-    /* @property string */
+    /* @var string */
     public $building = NULL;
-    /* @property string */
+    /* @var string */
     public $construction = NULL;
-    /* @property string */
+    /* @var string */
     public $apartment = NULL;
-    /* @property int */
+    /* @var int */
     public $order_id = NULL;
-    /* @property string */
+    /* @var string */
     public $delivery_date = NULL;
 
     /* @var Transport */
@@ -1038,7 +1086,7 @@ class Gift extends Model
     /**
      * Завершение доставки, клиенту вручили подарок.
      *
-     * @return mixed
+     * @return Gift
      */
     public function setStateDelivery()
     {
