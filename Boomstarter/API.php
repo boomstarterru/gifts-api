@@ -650,7 +650,7 @@ class GiftIterator extends \ArrayIterator
 
     public function asArray()
     {
-        return (array)$this;
+        return $this->getArrayCopy();
     }
 
     public function getValues($key)
@@ -793,7 +793,7 @@ class API
         $response = $this->getTransport()->get($url, $data);
 
         if (!isset($response['gifts'])) {
-            throw new Exception("Empty response from API server.");
+            throw new Exception("No 'gifts' element in response from API server.");
         }
 
         $items = $response['gifts'];
@@ -917,6 +917,18 @@ class API
         $gift = new Gift($this->getTransport(), array('uuid' => $gift_uuid));
         return $gift->setStateDelivery();
     }
+
+    /**
+     * Установливает URL для REST запросов
+     *
+     * @param $url string URL
+     * @return $this
+     */
+    public function setApiUrl($url)
+    {
+        $this->getTransport()->setApiUrl($url);
+        return $this;
+    }
 }
 
 /**
@@ -927,6 +939,10 @@ class API
  */
 class Gift extends Model
 {
+    const STATE_ACCEPT = 'accept';
+    const STATE_SHIP = 'ship';
+    const STATE_DELIVERY = 'delivery';
+
     /* @var int */
     public $pledged = NULL;    // 690.0
     /* @var string */
@@ -1066,7 +1082,7 @@ class Gift extends Model
     private function setState($delivery_state)
     {
         // validate
-        if ($delivery_state != 'delivery') {
+        if ($delivery_state != self::STATE_ACCEPT && $delivery_state != self::STATE_SHIP && $delivery_state != self::STATE_DELIVERY) {
             throw new Exception("Unsupported delivery state: '{$delivery_state}'. Expected 'delivery'");
         }
 
@@ -1084,12 +1100,32 @@ class Gift extends Model
     }
 
     /**
+     * Заказ принят
+     *
+     * @return Gift
+     */
+    public function setStateAccept()
+    {
+        return $this->setState(self::STATE_ACCEPT);
+    }
+
+    /**
+     * Ушел в доставку
+     *
+     * @return Gift
+     */
+    public function setStateShip()
+    {
+        return $this->setState(self::STATE_SHIP);
+    }
+
+    /**
      * Завершение доставки, клиенту вручили подарок.
      *
      * @return Gift
      */
     public function setStateDelivery()
     {
-        return $this->setState('delivery');
+        return $this->setState(self::STATE_DELIVERY);
     }
 }
