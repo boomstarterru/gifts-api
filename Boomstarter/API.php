@@ -262,6 +262,9 @@ class RestDriverCurl implements IRestDriver
         $curl->setOption(CURLOPT_HEADER, FALSE);
         $curl->setOption(CURLOPT_USERAGENT, USER_AGENT . ' (' . API_VERSION . '; ' . get_called_class() . ')');
         $curl->setOption(CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+        $curl->setOption(CURLOPT_FOLLOWLOCATION, TRUE);
+        $curl->setOption(CURLOPT_SSL_VERIFYHOST, 0);
+        $curl->setOption(CURLOPT_SSL_VERIFYPEER, 0);
 
         switch ($method) {
             case self::REQUEST_METHOD_POST:
