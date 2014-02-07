@@ -268,8 +268,16 @@ class RestDriverCurl implements IRestDriver
 
         switch ($method) {
             case self::REQUEST_METHOD_POST:
-            case self::REQUEST_METHOD_PUT:
+                $curl->setOption(CURLOPT_POST, TRUE);
+                $curl->setOption(CURLOPT_POSTFIELDS, json_encode($data));
+                break;
             case self::REQUEST_METHOD_DELETE:
+                $curl->setOption(CURLOPT_CUSTOMREQUEST, $method);
+                $curl->setOption(CURLOPT_POST, TRUE);
+                $curl->setOption(CURLOPT_POSTFIELDS, json_encode($data));
+                break;
+            case self::REQUEST_METHOD_PUT:
+                //$curl->setOption(CURLOPT_PUT, TRUE);
                 $curl->setOption(CURLOPT_CUSTOMREQUEST, $method);
                 $curl->setOption(CURLOPT_POST, TRUE);
                 $curl->setOption(CURLOPT_POSTFIELDS, json_encode($data));
